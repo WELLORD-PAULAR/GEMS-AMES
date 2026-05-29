@@ -1,0 +1,17 @@
+{
+    "name": "acer/pdftk",
+    "authors": [
+        {
+            "name": "Genesis10293847",
+            "email": "201875464@s.ubaguio.edu"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Classes\\" : "./"
+        }
+    },
+    "require": {
+        "mikehaertl/php-pdftk": "^0.14.2"
+    }
+}
