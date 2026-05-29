@@ -79,9 +79,9 @@ class ApiResponse
     {
         http_response_code($status);
         header('Content-Type: application/json; charset=utf-8');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGINS);
+        header('Access-Control-Allow-Methods: ' . ALLOWED_METHODS);
+        header('Access-Control-Allow-Headers: ' . ALLOWED_HEADERS);
         
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
@@ -95,9 +95,9 @@ class ApiResponse
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             http_response_code(200);
             header('Content-Type: application/json');
-            header('Access-Control-Allow-Origin: *');
-            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-            header('Access-Control-Allow-Headers: Content-Type, Authorization');
+            header('Access-Control-Allow-Origin: ' . ALLOWED_ORIGINS);
+            header('Access-Control-Allow-Methods: ' . ALLOWED_METHODS);
+            header('Access-Control-Allow-Headers: ' . ALLOWED_HEADERS);
             exit;
         }
     }

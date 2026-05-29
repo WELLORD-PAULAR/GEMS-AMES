@@ -21,7 +21,7 @@ class Enrollments extends BaseController
     {
         try {
             $page = max(1, (int)$this->input('page', 1));
-            $limit = min(100, max(1, (int)$this->input('limit', 10)));
+            $limit = min(MAX_ITEMS_PER_PAGE, max(1, (int)$this->input('limit', DEFAULT_ITEMS_PER_PAGE)));
             $offset = ($page - 1) * $limit;
 
             // Build query with filters

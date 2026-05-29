@@ -1,32 +1,67 @@
 <?php
+/**
+ * Unified Configuration File
+ * ============================================================
+ * Central configuration for the AMS application
+ * All environment-specific settings are managed here
+ * 
+ * For production deployment:
+ * 1. Update database credentials
+ * 2. Change JWT_SECRET to a strong value
+ * 3. Set API_ENV to 'production'
+ * 4. Restrict ALLOWED_ORIGINS to specific domains
+ * 5. Set API_DEBUG to false
+ * ============================================================
+ */
+
 // ============================================================
-// Database Configuration
-// ⚠️  SECURITY WARNING - PRODUCTION DEPLOYMENT
-// ============================================================
-// This configuration uses root user with no password.
-// This is ONLY acceptable for local development (XAMPP).
-//
-// BEFORE PRODUCTION DEPLOYMENT:
-// 1. Create a dedicated database user with limited privileges
-// 2. Use a strong password (20+ characters, mixed case, numbers, symbols)
-// 3. Use environment variables or a separate secure config file
-// 4. Never commit credentials to version control
-// 5. Use PHP_ENV variable to switch between dev/prod configs
-//
-// Example production setup:
-// $host = $_ENV['DB_HOST'] ?? 'localhost';
-// $db   = $_ENV['DB_NAME'] ?? 'gems_db';
-// $user = $_ENV['DB_USER'] ?? 'app_user';
-// $pass = $_ENV['DB_PASS'] ?? '';
+// DATABASE CONFIGURATION
 // ============================================================
 
-$host = "localhost";
-$db   = "gem_db";
-$user = "root";
-$pass = "";
-$char = "utf8mb4";
+// Local Development (XAMPP)
+define('DB_HOST', 'localhost');
+define('DB_NAME', 'gem_db');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_PORT', 3306);
+define('DB_CHARSET', 'utf8mb4');
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$char;port=3306";
+// Production Environment (example - uncomment and customize)
+// define('DB_HOST', $_ENV['DB_HOST'] ?? 'prod-db.example.com');
+// define('DB_NAME', $_ENV['DB_NAME'] ?? 'gem_db_prod');
+// define('DB_USER', $_ENV['DB_USER'] ?? 'db_user');
+// define('DB_PASS', $_ENV['DB_PASS'] ?? '');
+// define('DB_PORT', $_ENV['DB_PORT'] ?? 3306);
+
+// ============================================================
+// API CONFIGURATION
+// ============================================================
+
+define('API_ENV', 'development'); // 'development' or 'production'
+define('API_DEBUG', true); // Enable debugging in development
+define('API_TIMEOUT', 30); // Request timeout in seconds
+define('MAX_ITEMS_PER_PAGE', 100); // Maximum pagination limit
+define('DEFAULT_ITEMS_PER_PAGE', 10); // Default pagination limit
+
+// ============================================================
+// SECURITY CONFIGURATION
+// ============================================================
+
+define('JWT_SECRET', 'your-super-secret-key-change-in-production');
+define('JWT_EXPIRY', 86400); // 24 hours in seconds
+define('PASSWORD_HASH_ALGO', PASSWORD_BCRYPT);
+define('PASSWORD_HASH_OPTIONS', ['cost' => 10]); // Cost factor for bcrypt
+
+// CORS Configuration
+define('ALLOWED_ORIGINS', '*'); // Change to specific domain in production
+define('ALLOWED_METHODS', 'GET, POST, PUT, DELETE, OPTIONS');
+define('ALLOWED_HEADERS', 'Content-Type, Authorization');
+
+// ============================================================
+// PDO DATABASE CONNECTION
+// ============================================================
+
+$dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET . ";port=" . DB_PORT;
 
 $options = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -35,7 +70,11 @@ $options = [
 ];
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
-    exit("Connection failed: " . $e->getMessage());
+    if (API_DEBUG) {
+        exit("Connection failed: " . $e->getMessage());
+    } else {
+        exit("Database connection error. Please contact support.");
+    }
 }
