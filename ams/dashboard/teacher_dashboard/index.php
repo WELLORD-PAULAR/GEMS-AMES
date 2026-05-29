@@ -10,6 +10,12 @@ require_once __DIR__ . '/../../config/config.php';
 SessionManager::requireAuth();
 
 $user = SessionManager::getUser();
+
+if (!SessionManager::hasRole('TEACHER')) {
+    header('Location: ../admin_dashboard/');
+    exit;
+}
+
 $testResult = '';
 $testError = '';
 

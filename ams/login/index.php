@@ -5,10 +5,9 @@
 
 require_once __DIR__ . '/SessionManager.php';
 
-// If already logged in, redirect to dashboard
+// If already logged in, redirect to the dashboard that matches the user's role
 if (SessionManager::isAuthenticated()) {
-    header('Location: ../dashboard/admin_dashboard/');
-    exit;
+    SessionManager::redirectToDashboard();
 }
 
 $error = '';

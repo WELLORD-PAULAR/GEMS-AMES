@@ -146,12 +146,36 @@ class SessionManager
     }
 
     /**
+     * Normalize stored roles so role comparisons are reliable.
+     */
+    public static function normalizeRole($role)
+    {
+        return strtoupper(trim((string)$role));
+    }
+
+    /**
      * Get user role
      */
     public static function getUserRole()
     {
         $user = self::getUser();
-        return $user['role'] ?? null;
+        return self::normalizeRole($user['role'] ?? '');
+    }
+
+    /**
+     * Redirect the user to the dashboard that matches their role.
+     */
+    public static function redirectToDashboard()
+    {
+        $role = self::getUserRole();
+
+        if ($role === 'ADMIN') {
+            header('Location: ../dashboard/admin_dashboard/');
+        } else {
+            header('Location: ../dashboard/teacher_dashboard/');
+        }
+
+        exit;
     }
 
     /**
@@ -159,7 +183,7 @@ class SessionManager
      */
     public static function hasRole($role)
     {
-        return self::getUserRole() === $role;
+        return self::getUserRole() === self::normalizeRole($role);
     }
 }
 ?>

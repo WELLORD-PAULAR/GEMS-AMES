@@ -25,8 +25,8 @@ ApiResponse::handleOptions();
 
 // Initialize database
 try {
-    $db = new \API\Database($pdo);
-} catch (Exception $e) {
+    $db = new \Database($pdo);
+} catch (\Exception $e) {
     ApiResponse::error("Database connection failed", ApiResponse::HTTP_INTERNAL_ERROR);
 }
 
@@ -116,7 +116,7 @@ try {
         default:
             ApiResponse::error("Method not allowed", 405);
     }
-} catch (Exception $e) {
+} catch (\Exception $e) {
     ApiResponse::error(
         "Request failed: " . $e->getMessage(),
         ApiResponse::HTTP_INTERNAL_ERROR,

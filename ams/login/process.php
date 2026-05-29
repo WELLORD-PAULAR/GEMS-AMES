@@ -23,9 +23,11 @@ if (empty($username) || empty($password)) {
 }
 
 // Build API URL
+// Use the direct index.php route so the login works even when the local
+// rewrite base does not match the workspace path.
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$apiUrl = $protocol . '://' . $host . '/GEMS-AMES/ams/api/auth';
+$apiUrl = $protocol . '://' . $host . '/GEMS-AMES/ams/api/index.php?request=auth';
 
 // Make API request
 $response = SessionManager::apiRequest($apiUrl, 'POST', [
@@ -54,7 +56,6 @@ SessionManager::setAuth(
     $data['expires_at']
 );
 
-// Redirect to dashboard
-header('Location: ../dashboard/admin_dashboard/');
-exit;
+// Redirect to the dashboard that matches the user's role
+SessionManager::redirectToDashboard();
 ?>
