@@ -8,9 +8,20 @@
 <body>
     <div class="container">
         <h1>Student Enrollment</h1>
-        <p>Submit student data using the AMS API endpoints. The form will create the enrollment first, then save address, medical, parent, and special needs information.</p>
+        <p>Submit student data. Form will be processed server-side and saved to the database.</p>
 
-        <form id="enrollmentForm">
+        <!-- Display messages -->
+        <?php
+        session_start();
+        if (isset($_GET['success'])) {
+            echo '<div class="alert success">Enrollment submitted successfully!</div>';
+            unset($_SESSION['enrollment_result']);
+        } elseif (isset($_GET['error'])) {
+            echo '<div class="alert error">Error: ' . htmlspecialchars($_GET['error']) . '</div>';
+        }
+        ?>
+
+        <form id="enrollmentForm" method="POST" action="./process.php">
             <!-- Section 1: Enrollment Details -->
             <?php include 'sections/enrollment_details.php'; ?>
 
