@@ -25,7 +25,7 @@ if (empty($username) || empty($password)) {
 // Build API URL
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$apiUrl = $protocol . '://' . $host . '/WEBSYST1_FINAL/ams/api/auth';
+$apiUrl = $protocol . '://' . $host . '/GEMS-AMES/ams/api/auth';
 
 // Make API request
 $response = SessionManager::apiRequest($apiUrl, 'POST', [
