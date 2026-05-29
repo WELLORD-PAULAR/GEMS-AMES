@@ -17,7 +17,7 @@ $testError = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_api'])) {
     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $apiUrl = $protocol . '://' . $host . '/WEBSYST1_FINAL/ams/api/users';
+    $apiUrl = $protocol . '://' . $host . '/GEMS-AMES/ams/api/users';
 
     $response = SessionManager::apiRequest($apiUrl, 'GET');
 

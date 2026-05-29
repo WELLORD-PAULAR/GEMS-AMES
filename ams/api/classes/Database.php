@@ -1,4 +1,7 @@
 <?php
+
+namespace API;
+
 /**
  * Database Helper Class
  * Wrapper around PDO for consistent database operations

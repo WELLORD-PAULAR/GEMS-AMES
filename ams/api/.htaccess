@@ -1,6 +1,6 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /WEBSYST1_FINAL/ams/api/
+    RewriteBase /GEMS-AMES/ams/api/
     
     # Remove .php extension from URLs
     RewriteCond %{REQUEST_FILENAME} !-f

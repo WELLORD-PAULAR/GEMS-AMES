@@ -13,7 +13,7 @@ $user = $isAuthenticated ? SessionManager::getUser() : null;
 $apiStatus = 'Offline';
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$testApiUrl = $protocol . '://' . $host . '/WEBSYST1_FINAL/ams/api/users';
+$testApiUrl = $protocol . '://' . $host . '/GEMS-AMES/ams/api/users';
 
 $response = SessionManager::apiRequest($testApiUrl, 'GET');
 if ($response['success']) {
@@ -58,8 +58,8 @@ if ($response['success']) {
         <section id="system-info">
             <h2>System Information</h2>
             <ul>
-                <li><strong>Base URL:</strong> http://localhost/WEBSYST1_FINAL/ams/</li>
-                <li><strong>API Base:</strong> http://localhost/WEBSYST1_FINAL/ams/api/</li>
+                <li><strong>Base URL:</strong> http://localhost/GEMS-AMES/ams/</li>
+                <li><strong>API Base:</strong> http://localhost/GEMS-AMES/ams/api/</li>
                 <li><strong>Database:</strong> <?php echo htmlspecialchars(DB_NAME); ?></li>
                 <li><strong>Environment:</strong> <?php echo htmlspecialchars(API_ENV); ?></li>
                 <li><strong>API Status:</strong> <?php echo $apiStatus; ?></li>
