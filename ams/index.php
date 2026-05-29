@@ -5,17 +5,6 @@ require_once __DIR__ . '/config/config.php';
 
 $isAuthenticated = SessionManager::isAuthenticated();
 $user = $isAuthenticated ? SessionManager::getUser() : null;
-
-//tester
-$apiStatus = 'Offline';
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$testApiUrl = $protocol . '://' . $host . '/WEBSYST1_FINAL/ams/api/users';
-
-$response = SessionManager::apiRequest($testApiUrl, 'GET');
-if ($response['success']) {
-    $apiStatus = 'Online';
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +22,6 @@ if ($response['success']) {
     <nav id="main-nav">
         <ul>
             <li><a href="./">Home</a></li>
-            <li><a href="./api/">API Documentation</a></li>
         </ul>
     </nav>
 
@@ -56,28 +44,21 @@ if ($response['success']) {
             <h2>System Information</h2>
             <ul>
                 <li><strong>Base URL:</strong> http://localhost/WEBSYST1_FINAL/ams/</li>
-                <li><strong>API Base:</strong> http://localhost/WEBSYST1_FINAL/ams/api/</li>
+                <li><strong>Lookup Endpoint:</strong> <code>./api/search.php</code></li>
                 <li><strong>Database:</strong> <?php echo htmlspecialchars(DB_NAME); ?></li>
                 <li><strong>Environment:</strong> <?php echo htmlspecialchars(API_ENV); ?></li>
-                <li><strong>API Status:</strong> <?php echo $apiStatus; ?></li>
+                <li><strong>Architecture:</strong> Server-side OOP + PDO with lightweight AJAX lookup support</li>
             </ul>
         </section>
 
         <section id="endpoints">
-            <h2>Available Endpoints</h2>
+            <h2>Available Lookup Endpoints</h2>
             <ul>
-                <li><code>POST /api/auth</code> - User login</li>
-                <li><code>GET /api/users</code> - List all users</li>
-                <li><code>GET /api/enrollments</code> - List enrollments</li>
-                <li><code>GET /api/addresses</code> - List addresses</li>
-                <li><code>GET /api/medical</code> - List medical records</li>
-                <li><code>GET /api/parents</code> - List parent records</li>
-                <li><code>GET /api/special-needs</code> - List special needs</li>
-                <li><code>GET /api/mother-tongue</code> - List mother tongues</li>
-                <li><code>GET /api/religions</code> - List religions</li>
-                <li><code>GET /api/indigenous-groups</code> - List indigenous groups</li>
+                <li><code>GET /api/search.php?type=mother-tongue&amp;q=...</code> - Autocomplete lookup</li>
+                <li><code>GET /api/search.php?type=religions&amp;q=...</code> - Autocomplete lookup</li>
+                <li><code>GET /api/search.php?type=indigenous-groups&amp;q=...</code> - Autocomplete lookup</li>
             </ul>
-            <p><a href="./api/API_DOCUMENTATION.md">View Full API Documentation</a></p>
+            <p>Authentication and enrollment processing are handled server-side in <code>config/</code>, <code>classes/</code>, and <code>handlers/</code>.</p>
         </section>
 
         <section id="quick-start">
@@ -86,7 +67,7 @@ if ($response['success']) {
                 <li><a href="./login/">Go to login page</a></li>
                 <li>Enter your credentials</li>
                 <li>Access your dashboard</li>
-                <li>Use the test buttons to verify API connectivity</li>
+                <li>Use the form interface for enrollment and lookup workflows</li>
             </ol>
         </section>
     </main>

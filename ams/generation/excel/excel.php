@@ -1,11 +1,12 @@
 <?php
 require_once __DIR__ . '/GenerateExcel.php';
 require_once __DIR__ . '/../../config/config.php';
-require_once __DIR__ . '/../../login/auth.php';
+require_once __DIR__ . '/../../login/SessionManager.php';
 
 use Classes\GenerateExcel;
 
-require_role(['staff', 'admin']);
+SessionManager::requireAuth();
+SessionManager::requireRole(['ADMIN', 'TEACHER']);
 
 $student_id = $_GET['student_id'] ?? null;
 $type = $_GET['type'] ?? 'medical';

@@ -1,9 +1,4 @@
 <?php
-/**
- * Session Manager
- * Handles authentication and session management server-side
- */
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -144,6 +139,27 @@ class SessionManager
     public static function hasRole($role)
     {
         return self::getUserRole() === self::normalizeRole($role);
+    }
+
+    public static function requireRole($roles)
+    {
+        self::requireAuth();
+        
+        if (!is_array($roles)) {
+            $roles = [$roles];
+        }
+
+        $userRole = self::getUserRole();
+        foreach ($roles as $role) {
+            if ($userRole === self::normalizeRole($role)) {
+                return;
+            }
+        }
+
+        header('HTTP/1.1 403 Forbidden');
+        http_response_code(403);
+        echo 'Access denied: insufficient permissions';
+        exit;
     }
 }
 ?>

@@ -11,24 +11,6 @@ if (!SessionManager::hasRole('TEACHER')) {
     header('Location: ../admin_dashboard/');
     exit;
 }
-
-$testResult = '';
-$testError = '';
-
-// Handle API test
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_api'])) {
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-    $apiUrl = $protocol . '://' . $host . '/WEBSYST1_FINAL/ams/api/enrollments';
-
-    $response = SessionManager::apiRequest($apiUrl, 'GET');
-
-    if ($response['success']) {
-        $testResult = json_encode($response['data'], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    } else {
-        $testError = $response['data']['message'] ?? 'API request failed';
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,24 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['test_api'])) {
             </ul>
         </section>
 
-        <section id="test-api">
-            <h3>Test API Connection</h3>
-            <form method="POST">
-                <button type="submit" name="test_api" value="1">Fetch Enrollments</button>
-            </form>
-
-            <?php if ($testError): ?>
-                <div class="error-message">
-                    <p><strong>Error:</strong> <?php echo htmlspecialchars($testError); ?></p>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($testResult): ?>
-                <div class="test-result">
-                    <h4>API Response</h4>
-                    <pre><?php echo htmlspecialchars($testResult); ?></pre>
-                </div>
-            <?php endif; ?>
+        <section id="note">
+            <h3>System Status</h3>
+            <p>The legacy REST endpoint controller layer has been removed. This dashboard is a server-side skeleton page for authenticated Teacher users.</p>
         </section>
     </main>
 </body>

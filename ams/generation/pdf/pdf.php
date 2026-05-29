@@ -1,11 +1,12 @@
 <?php
 require_once __DIR__ . '/../../config/config.php';
-require_once __DIR__ . '/../../login/auth.php';
+require_once __DIR__ . '/../../login/SessionManager.php';
 require_once __DIR__ . '/GeneratePDF.php';
 
 use Classes\GeneratePDF;
 
-require_role(['staff', 'admin']);
+SessionManager::requireAuth();
+SessionManager::requireRole(['ADMIN', 'TEACHER']);
 
 $student_id = isset($_GET['student_id']) ? intval($_GET['student_id']) : 0;
 $type = $_GET['type'] ?? 'combined';
