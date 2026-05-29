@@ -4,6 +4,8 @@
  * Handles all API requests with routing
  */
 
+namespace API;
+
 header('Content-Type: application/json; charset=utf-8');
 
 // Enable error reporting for debugging
@@ -23,7 +25,7 @@ ApiResponse::handleOptions();
 
 // Initialize database
 try {
-    $db = new Database($pdo);
+    $db = new \API\Database($pdo);
 } catch (Exception $e) {
     ApiResponse::error("Database connection failed", ApiResponse::HTTP_INTERNAL_ERROR);
 }

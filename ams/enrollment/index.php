@@ -31,6 +31,22 @@
                         <input type="text" id="ed_school_year" name="ed_school_year" placeholder="2025-2026" required>
                     </div>
                     <div>
+                        <label for="rl_last_grade_level_completed">Last Grade Level Completed</label>
+                        <input type="text" id="rl_last_grade_level_completed" name="rl_last_grade_level_completed">
+                    </div>
+                    <div>
+                        <label for="rl_last_school_year_completed">Last School Year Completed</label>
+                        <input type="text" id="rl_last_school_year_completed" name="rl_last_school_year_completed">
+                    </div>
+                    <div>
+                        <label for="rl_school_attended">Last School Attended</label>
+                        <input type="text" id="rl_school_attended" name="rl_school_attended">
+                    </div>
+                    <div>
+                        <label for="rl_school_id">Last School ID</label>
+                        <input type="number" id="rl_school_id" name="rl_school_id">
+                    </div>
+                    <div>
                         <label for="user_account_id">User Account ID</label>
                         <input type="number" id="user_account_id" name="user_account_id" placeholder="Optional">
                     </div>
