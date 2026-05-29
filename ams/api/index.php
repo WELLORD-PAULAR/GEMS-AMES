@@ -16,6 +16,8 @@ require_once '../config/config.php';
 require_once __DIR__ . '/classes/Database.php';
 require_once __DIR__ . '/classes/ApiResponse.php';
 
+use API\ApiResponse;
+
 // Handle CORS and OPTIONS requests
 ApiResponse::handleOptions();
 

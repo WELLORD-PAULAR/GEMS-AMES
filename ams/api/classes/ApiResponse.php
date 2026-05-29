@@ -1,4 +1,6 @@
 <?php
+namespace API;
+
 /**
  * API Response Handler
  * Standardizes all API responses

@@ -142,8 +142,29 @@ class Enrollments extends BaseController
                 }
             }
 
+            if (!empty($data['ed_lrn']) && !preg_match('/^[0-9]+$/', $data['ed_lrn'])) {
+                $errors['ed_lrn'] = 'ed_lrn must be a numeric value';
+            }
+
+            if (isset($data['user_account_id']) && $data['user_account_id'] !== '' && (!is_numeric($data['user_account_id']) || (int)$data['user_account_id'] <= 0)) {
+                $errors['user_account_id'] = 'user_account_id must be a positive integer';
+            }
+
             if (!empty($errors)) {
                 ApiResponse::error("Validation failed", 422, $errors);
+            }
+
+            if (isset($data['user_account_id']) && $data['user_account_id'] !== '') {
+                $userAccount = $this->db->fetch(
+                    "SELECT id FROM user_account WHERE id = ?",
+                    [(int)$data['user_account_id']]
+                );
+
+                if (!$userAccount) {
+                    ApiResponse::error("Validation failed", 422, [
+                        'user_account_id' => 'User account does not exist'
+                    ]);
+                }
             }
 
             // Check if enrollment already exists
@@ -180,7 +201,7 @@ class Enrollments extends BaseController
                 'pi_learning_classification' => $data['pi_learning_classification'] ?? 'GRADED',
                 'ac_indigenous_group_id' => (int)($data['ac_indigenous_group_id'] ?? 1),
                 'ac_4ps_household_number' => $data['ac_4ps_household_number'] ?? '',
-                'user_account_id' => (int)($data['user_account_id'] ?? 0),
+                'user_account_id' => isset($data['user_account_id']) && $data['user_account_id'] !== '' ? (int)$data['user_account_id'] : null,
                 'li_learning_modality' => $data['li_learning_modality'] ?? 'BLENDED (COMBINATION)'
             ];
 
@@ -193,7 +214,7 @@ class Enrollments extends BaseController
 
             ApiResponse::success($enrollment, ApiResponse::HTTP_CREATED, "Enrollment created successfully");
         } catch (\Exception $e) {
-            ApiResponse::error("Failed to create enrollment", ApiResponse::HTTP_INTERNAL_ERROR);
+            ApiResponse::error("Failed to create enrollment", ApiResponse::HTTP_INTERNAL_ERROR, ['exception' => $e->getMessage()]);
         }
     }
 
