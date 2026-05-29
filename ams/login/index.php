@@ -7,7 +7,7 @@ require_once __DIR__ . '/SessionManager.php';
 
 // If already logged in, redirect to dashboard
 if (SessionManager::isAuthenticated()) {
-    header('Location: ../dashboard/admin_dashboard/');
+    header('Location: /GEMS-AMES/ams/dashboard/admin_dashboard/');
     exit;
 }
 

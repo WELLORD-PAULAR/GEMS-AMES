@@ -55,6 +55,6 @@ SessionManager::setAuth(
 );
 
 // Redirect to dashboard
-header('Location: ../dashboard/admin_dashboard/');
+header('Location: /GEMS-AMES/ams/dashboard/admin_dashboard/');
 exit;
 ?>
