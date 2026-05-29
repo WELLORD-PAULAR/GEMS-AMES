@@ -1,14 +1,7 @@
 <?php
-
 namespace API;
-
 require_once __DIR__ . '/../classes/BaseController.php';
 require_once __DIR__ . '/../classes/ApiResponse.php';
-
-/**
- * Authentication Controller
- * Handles user login and authentication
- */
 
 class Auth extends BaseController
 {
@@ -58,10 +51,7 @@ class Auth extends BaseController
 
         return true;
     }
-
-    /**
-     * POST /auth - Login user
-     */
+    
     public function store()
     {
         try {
@@ -136,11 +126,9 @@ class Auth extends BaseController
                 ApiResponse::error("Invalid credentials", ApiResponse::HTTP_UNAUTHORIZED);
             }
 
-            // Remove password hash from response
             unset($user['password_hash']);
             unset($user['password']);
 
-            // Generate a simple token (in production, use JWT)
             $token = bin2hex(random_bytes(32));
 
             ApiResponse::success([

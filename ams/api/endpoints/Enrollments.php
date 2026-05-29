@@ -1,22 +1,11 @@
 <?php
-
 namespace API;
-
 require_once __DIR__ . '/../classes/BaseController.php';
 require_once __DIR__ . '/../classes/ApiResponse.php';
-
-/**
- * Enrollments Controller
- * Handles enrollment data CRUD operations
- */
 
 class Enrollments extends BaseController
 {
     protected $table = 'enrollment2';
-
-    /**
-     * GET /enrollments - List all enrollments with pagination and filters
-     */
     public function index()
     {
         try {
@@ -24,33 +13,27 @@ class Enrollments extends BaseController
             $limit = min(MAX_ITEMS_PER_PAGE, max(1, (int)$this->input('limit', DEFAULT_ITEMS_PER_PAGE)));
             $offset = ($page - 1) * $limit;
 
-            // Build query with filters
             $query = "SELECT * FROM {$this->table} WHERE 1=1";
             $params = [];
 
-            // Filter by grade level
             if ($this->input('grade_level')) {
                 $query .= " AND ed_grade_level = ?";
                 $params[] = $this->input('grade_level');
             }
 
-            // Filter by school year
             if ($this->input('school_year')) {
                 $query .= " AND ed_school_year = ?";
                 $params[] = $this->input('school_year');
             }
 
-            // Filter by user (parent/student)
             if ($this->input('user_id')) {
                 $query .= " AND user_account_id = ?";
                 $params[] = (int)$this->input('user_id');
             }
 
-            // Get total count
             $countQuery = str_replace('SELECT *', 'SELECT COUNT(*) as count', $query);
             $total = $this->db->fetch($countQuery, $params);
 
-            // Add pagination and sort
             $query .= " ORDER BY ed_school_year DESC, fk_full_name_bd ASC LIMIT ? OFFSET ?";
             $params[] = $limit;
             $params[] = $offset;
@@ -63,9 +46,6 @@ class Enrollments extends BaseController
         }
     }
 
-    /**
-     * GET /enrollments/{id} - Get a specific enrollment with related data
-     */
     public function show($id)
     {
         try {
@@ -86,25 +66,21 @@ class Enrollments extends BaseController
                 ApiResponse::error("Enrollment not found", ApiResponse::HTTP_NOT_FOUND);
             }
 
-            // Get related address data
             $address = $this->db->fetch(
                 "SELECT * FROM enrollment_address2 WHERE fk_full_name_bd = ?",
                 [$id]
             );
 
-            // Get related medical data
             $medical = $this->db->fetch(
                 "SELECT * FROM enrollment_medical2 WHERE fk_full_name_bd = ?",
                 [$id]
             );
 
-            // Get related parent data
             $parents = $this->db->query(
                 "SELECT * FROM enrollment_parent2 WHERE fk_full_name_bd = ?",
                 [$id]
             );
 
-            // Get related special needs data
             $specialNeeds = $this->db->fetch(
                 "SELECT * FROM enrollment_special_needs2 WHERE fk_full_name_bd = ?",
                 [$id]
@@ -121,15 +97,11 @@ class Enrollments extends BaseController
         }
     }
 
-    /**
-     * POST /enrollments - Create a new enrollment
-     */
     public function store()
     {
         try {
             $data = $this->input();
 
-            // Validate required fields
             $required = [
                 'fk_full_name_bd', 'ed_grade_level', 'ed_lrn', 
                 'ed_school_year', 'pi_last_name', 'pi_first_name'
@@ -167,7 +139,6 @@ class Enrollments extends BaseController
                 }
             }
 
-            // Check if enrollment already exists
             $existing = $this->db->fetch(
                 "SELECT fk_full_name_bd FROM {$this->table} WHERE fk_full_name_bd = ?",
                 [$data['fk_full_name_bd']]
@@ -177,7 +148,6 @@ class Enrollments extends BaseController
                 ApiResponse::error("Enrollment already exists", ApiResponse::HTTP_CONFLICT);
             }
 
-            // Prepare data for insertion
             $insertData = [
                 'fk_full_name_bd' => $data['fk_full_name_bd'],
                 'ed_grade_level' => $data['ed_grade_level'],
@@ -218,9 +188,6 @@ class Enrollments extends BaseController
         }
     }
 
-    /**
-     * PUT /enrollments/{id} - Update an enrollment
-     */
     public function update($id)
     {
         try {
@@ -235,8 +202,6 @@ class Enrollments extends BaseController
 
             $data = $this->input();
             $updateData = [];
-
-            // Only update provided fields
             $allowedFields = [
                 'ed_grade_level', 'ed_lrn', 'ed_school_year',
                 'rl_last_grade_level_completed', 'rl_last_school_year_completed',
@@ -271,9 +236,6 @@ class Enrollments extends BaseController
         }
     }
 
-    /**
-     * DELETE /enrollments/{id} - Delete an enrollment
-     */
     public function destroy($id)
     {
         try {

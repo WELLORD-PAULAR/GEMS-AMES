@@ -1,13 +1,7 @@
 <?php
-
 namespace API;
-
 require_once __DIR__ . '/../classes/BaseController.php';
 require_once __DIR__ . '/../classes/ApiResponse.php';
-
-/**
- * Mother Tongue Reference Controller
- */
 
 class MotherTongue extends BaseController
 {
@@ -127,10 +121,6 @@ class MotherTongue extends BaseController
     }
 }
 
-/**
- * Religion Reference Controller
- */
-
 class Religion extends BaseController
 {
     protected $table = 'religion';
@@ -248,10 +238,6 @@ class Religion extends BaseController
         }
     }
 }
-
-/**
- * Indigenous Group Reference Controller
- */
 
 class IndigenousGroup extends BaseController
 {

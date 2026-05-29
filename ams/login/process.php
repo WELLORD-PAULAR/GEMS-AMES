@@ -1,13 +1,7 @@
 <?php
-/**
- * Login Process Handler
- * Processes login form and calls API
- */
-
 require_once __DIR__ . '/SessionManager.php';
 require_once __DIR__ . '/../config/config.php';
 
-// Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: ./');
     exit;
@@ -16,20 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $username = $_POST['username'] ?? '';
 $password = $_POST['password'] ?? '';
 
-// Validate input
 if (empty($username) || empty($password)) {
     header('Location: ./index.php?error=' . urlencode('Username and password are required'));
     exit;
 }
 
-// Build API URL
-// Use the direct index.php route so the login works even when the local
-// rewrite base does not match the workspace path.
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $apiUrl = $protocol . '://' . $host . '/GEMS-AMES/ams/api/index.php?request=auth';
 
-// Make API request
 $response = SessionManager::apiRequest($apiUrl, 'POST', [
     'username' => $username,
     'password' => $password
@@ -41,7 +30,6 @@ if (!$response['success']) {
     exit;
 }
 
-// Extract token and user data
 $data = $response['data']['data'] ?? null;
 
 if (!$data || !isset($data['token']) || !isset($data['user'])) {
@@ -49,13 +37,11 @@ if (!$data || !isset($data['token']) || !isset($data['user'])) {
     exit;
 }
 
-// Store in session
 SessionManager::setAuth(
     $data['token'],
     $data['user'],
     $data['expires_at']
 );
 
-// Redirect to the dashboard that matches the user's role
 SessionManager::redirectToDashboard();
 ?>

@@ -1,7 +1,4 @@
 <?php
-/**
- * AMS Home Page
- */
 
 require_once __DIR__ . '/login/SessionManager.php';
 require_once __DIR__ . '/config/config.php';
@@ -9,7 +6,7 @@ require_once __DIR__ . '/config/config.php';
 $isAuthenticated = SessionManager::isAuthenticated();
 $user = $isAuthenticated ? SessionManager::getUser() : null;
 
-// Test API connection
+//tester
 $apiStatus = 'Offline';
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';

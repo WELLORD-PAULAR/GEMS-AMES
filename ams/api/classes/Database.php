@@ -1,9 +1,4 @@
 <?php
-/**
- * Database Helper Class
- * Wrapper around PDO for consistent database operations
- */
-
 class Database
 {
     private $pdo;
@@ -13,12 +8,6 @@ class Database
         $this->pdo = $pdo;
     }
 
-    /**
-     * Execute SELECT query
-     * @param string $query SQL query with placeholders
-     * @param array $params Parameters to bind
-     * @return array Result set
-     */
     public function query($query, $params = [])
     {
         try {
@@ -30,12 +19,6 @@ class Database
         }
     }
 
-    /**
-     * Fetch single row
-     * @param string $query SQL query with placeholders
-     * @param array $params Parameters to bind
-     * @return array|null Single row or null
-     */
     public function fetch($query, $params = [])
     {
         try {
@@ -47,12 +30,6 @@ class Database
         }
     }
 
-    /**
-     * Execute INSERT query
-     * @param string $table Table name
-     * @param array $data Key-value pairs
-     * @return int Last insert ID
-     */
     public function insert($table, $data)
     {
         try {
@@ -69,13 +46,6 @@ class Database
         }
     }
 
-    /**
-     * Execute UPDATE query
-     * @param string $table Table name
-     * @param array $data Key-value pairs to update
-     * @param array $conditions WHERE conditions as key-value pairs
-     * @return int Number of affected rows
-     */
     public function update($table, $data, $conditions)
     {
         try {
@@ -94,12 +64,6 @@ class Database
         }
     }
 
-    /**
-     * Execute DELETE query
-     * @param string $table Table name
-     * @param array $conditions WHERE conditions as key-value pairs
-     * @return int Number of affected rows
-     */
     public function delete($table, $conditions)
     {
         try {
@@ -115,34 +79,21 @@ class Database
         }
     }
 
-    /**
-     * Get PDO instance for complex queries
-     * @return PDO
-     */
     public function getPDO()
     {
         return $this->pdo;
     }
 
-    /**
-     * Begin transaction
-     */
     public function beginTransaction()
     {
         $this->pdo->beginTransaction();
     }
 
-    /**
-     * Commit transaction
-     */
     public function commit()
     {
         $this->pdo->commit();
     }
 
-    /**
-     * Rollback transaction
-     */
     public function rollback()
     {
         $this->pdo->rollBack();

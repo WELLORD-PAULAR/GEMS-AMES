@@ -1,11 +1,6 @@
 <?php
 namespace API;
 
-/**
- * API Response Handler
- * Standardizes all API responses
- */
-
 class ApiResponse
 {
     const HTTP_OK = 200;
@@ -17,12 +12,6 @@ class ApiResponse
     const HTTP_CONFLICT = 409;
     const HTTP_INTERNAL_ERROR = 500;
 
-    /**
-     * Send success response
-     * @param array $data Response data
-     * @param int $status HTTP status code
-     * @param string $message Success message
-     */
     public static function success($data = [], $status = self::HTTP_OK, $message = "Success")
     {
         self::send([
@@ -33,12 +22,6 @@ class ApiResponse
         ], $status);
     }
 
-    /**
-     * Send error response
-     * @param string $message Error message
-     * @param int $status HTTP status code
-     * @param array $errors Additional error details
-     */
     public static function error($message, $status = self::HTTP_BAD_REQUEST, $errors = [])
     {
         self::send([
@@ -49,13 +32,6 @@ class ApiResponse
         ], $status);
     }
 
-    /**
-     * Send paginated response
-     * @param array $data Array of items
-     * @param int $total Total number of items
-     * @param int $page Current page
-     * @param int $limit Items per page
-     */
     public static function paginated($data, $total, $page, $limit)
     {
         self::send([
@@ -72,11 +48,6 @@ class ApiResponse
         ], self::HTTP_OK);
     }
 
-    /**
-     * Send JSON response
-     * @param array $response Response array
-     * @param int $status HTTP status code
-     */
     private static function send($response, $status = self::HTTP_OK)
     {
         http_response_code($status);
@@ -89,9 +60,6 @@ class ApiResponse
         exit;
     }
 
-    /**
-     * Handle OPTIONS requests for CORS
-     */
     public static function handleOptions()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

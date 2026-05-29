@@ -1,11 +1,5 @@
 <?php
-
 namespace API;
-
-/**
- * Base Controller
- * All endpoint controllers extend this class
- */
 
 abstract class BaseController
 {
@@ -20,9 +14,6 @@ abstract class BaseController
         $this->parseRequestData();
     }
 
-    /**
-     * Parse incoming request data
-     */
     protected function parseRequestData()
     {
         $input = file_get_contents('php://input');
@@ -30,17 +21,10 @@ abstract class BaseController
         if (!empty($input)) {
             $this->requestData = json_decode($input, true) ?? [];
         }
-        
-        // Also include GET parameters
+
         $this->requestData = array_merge($_GET, $this->requestData);
     }
 
-    /**
-     * Get request data
-     * @param string $key Optional key to get specific value
-     * @param mixed $default Default value if key not found
-     * @return mixed
-     */
     protected function input($key = null, $default = null)
     {
         if ($key === null) {
@@ -49,12 +33,6 @@ abstract class BaseController
         
         return $this->requestData[$key] ?? $default;
     }
-
-    /**
-     * Validate input data
-     * @return bool
-     * @throws Exception
-     */
     protected function validate($data = null)
     {
         $data = $data ?? $this->requestData;
@@ -97,32 +75,10 @@ abstract class BaseController
         return true;
     }
 
-    /**
-     * List all resources with pagination
-     */
     abstract public function index();
-
-    /**
-     * Show a specific resource
-     * @param mixed $id
-     */
     abstract public function show($id);
-
-    /**
-     * Store a new resource
-     */
     abstract public function store();
-
-    /**
-     * Update a resource
-     * @param mixed $id
-     */
     abstract public function update($id);
-
-    /**
-     * Delete a resource
-     * @param mixed $id
-     */
     abstract public function destroy($id);
 }
 ?>

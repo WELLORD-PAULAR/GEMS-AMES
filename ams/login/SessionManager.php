@@ -4,7 +4,6 @@
  * Handles authentication and session management server-side
  */
 
-// Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -15,16 +14,13 @@ class SessionManager
     const USER_KEY = 'auth_user';
     const EXPIRY_KEY = 'auth_expiry';
 
-    /**
-     * Check if user is authenticated
-     */
+
     public static function isAuthenticated()
     {
         if (!isset($_SESSION[self::TOKEN_KEY])) {
             return false;
         }
 
-        // Check if token has expired
         if (isset($_SESSION[self::EXPIRY_KEY])) {
             if (strtotime($_SESSION[self::EXPIRY_KEY]) < time()) {
                 self::logout();
@@ -35,9 +31,6 @@ class SessionManager
         return true;
     }
 
-    /**
-     * Store authentication data after successful login
-     */
     public static function setAuth($token, $user, $expiresAt)
     {
         $_SESSION[self::TOKEN_KEY] = $token;
@@ -45,25 +38,16 @@ class SessionManager
         $_SESSION[self::EXPIRY_KEY] = $expiresAt;
     }
 
-    /**
-     * Get stored user data
-     */
     public static function getUser()
     {
         return $_SESSION[self::USER_KEY] ?? null;
     }
 
-    /**
-     * Get stored authentication token
-     */
     public static function getToken()
     {
         return $_SESSION[self::TOKEN_KEY] ?? null;
     }
 
-    /**
-     * Clear authentication data (logout)
-     */
     public static function logout()
     {
         unset($_SESSION[self::TOKEN_KEY]);
@@ -72,18 +56,12 @@ class SessionManager
         session_destroy();
     }
 
-    /**
-     * Get authorization header for API requests
-     */
     public static function getAuthHeader()
     {
         $token = self::getToken();
         return $token ? ['Authorization: Bearer ' . $token] : [];
     }
 
-    /**
-     * Make authenticated API request
-     */
     public static function apiRequest($url, $method = 'GET', $data = null)
     {
         $ch = curl_init();
@@ -118,8 +96,6 @@ class SessionManager
         }
 
         $data = json_decode($response, true);
-
-        // If 401, logout user
         if ($httpCode === 401) {
             self::logout();
             header('Location: ../login/');
@@ -133,10 +109,6 @@ class SessionManager
         ];
     }
 
-    /**
-     * Require authentication
-     * Redirect to login if not authenticated
-     */
     public static function requireAuth()
     {
         if (!self::isAuthenticated()) {
@@ -145,26 +117,17 @@ class SessionManager
         }
     }
 
-    /**
-     * Normalize stored roles so role comparisons are reliable.
-     */
     public static function normalizeRole($role)
     {
         return strtoupper(trim((string)$role));
     }
 
-    /**
-     * Get user role
-     */
     public static function getUserRole()
     {
         $user = self::getUser();
         return self::normalizeRole($user['role'] ?? '');
     }
 
-    /**
-     * Redirect the user to the dashboard that matches their role.
-     */
     public static function redirectToDashboard()
     {
         $role = self::getUserRole();
@@ -178,9 +141,6 @@ class SessionManager
         exit;
     }
 
-    /**
-     * Check if user has specific role
-     */
     public static function hasRole($role)
     {
         return self::getUserRole() === self::normalizeRole($role);

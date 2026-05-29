@@ -1,7 +1,4 @@
 <?php
-/**
- * Admin Dashboard
- */
 
 require_once __DIR__ . '/../../login/SessionManager.php';
 require_once __DIR__ . '/../../config/config.php';

@@ -1,13 +1,7 @@
 <?php
-
 namespace API;
-
 require_once __DIR__ . '/../classes/BaseController.php';
 require_once __DIR__ . '/../classes/ApiResponse.php';
-
-/**
- * Enrollment Special Needs Controller
- */
 
 class EnrollmentSpecialNeeds extends BaseController
 {

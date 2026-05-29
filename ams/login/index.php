@@ -1,19 +1,13 @@
 <?php
-/**
- * AMS Login Page
- */
 
 require_once __DIR__ . '/SessionManager.php';
 
-// If already logged in, redirect to the dashboard that matches the user's role
 if (SessionManager::isAuthenticated()) {
     SessionManager::redirectToDashboard();
 }
-
 $error = '';
 $success = '';
 
-// Check for error/success messages from process.php
 if (isset($_GET['error'])) {
     $error = htmlspecialchars($_GET['error']);
 }

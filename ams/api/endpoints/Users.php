@@ -1,14 +1,7 @@
 <?php
-
 namespace API;
-
 require_once __DIR__ . '/../classes/BaseController.php';
 require_once __DIR__ . '/../classes/ApiResponse.php';
-
-/**
- * Users Controller
- * Handles user account CRUD operations
- */
 
 class Users extends BaseController
 {
@@ -21,9 +14,6 @@ class Users extends BaseController
         'role' => 'required'
     ];
 
-    /**
-     * GET /users - List all users with pagination
-     */
     public function index()
     {
         try {
@@ -49,9 +39,6 @@ class Users extends BaseController
         }
     }
 
-    /**
-     * GET /users/{id} - Get a specific user
-     */
     public function show($id)
     {
         try {
@@ -72,9 +59,6 @@ class Users extends BaseController
         }
     }
 
-    /**
-     * POST /users - Create a new user
-     */
     public function store()
     {
         try {
@@ -84,8 +68,6 @@ class Users extends BaseController
             $email = $this->input('email');
             $password = $this->input('password');
             $role = $this->input('role', 'PARENT');
-
-            // Check if username already exists
             $existing = $this->db->fetch(
                 "SELECT id FROM {$this->table} WHERE username = ?",
                 [$username]
@@ -95,7 +77,6 @@ class Users extends BaseController
                 ApiResponse::error("Username already exists", ApiResponse::HTTP_CONFLICT);
             }
 
-            // Check if email already exists
             $existing = $this->db->fetch(
                 "SELECT id FROM {$this->table} WHERE email = ?",
                 [$email]
@@ -105,7 +86,6 @@ class Users extends BaseController
                 ApiResponse::error("Email already exists", ApiResponse::HTTP_CONFLICT);
             }
 
-            // Hash password
             $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 
             $id = $this->db->insert($this->table, [
@@ -132,9 +112,6 @@ class Users extends BaseController
         }
     }
 
-    /**
-     * PUT /users/{id} - Update a user
-     */
     public function update($id)
     {
         try {
@@ -150,7 +127,7 @@ class Users extends BaseController
             $updateData = [];
 
             if ($this->input('username')) {
-                // Check if username is already taken by another user
+
                 $existing = $this->db->fetch(
                     "SELECT id FROM {$this->table} WHERE username = ? AND id != ?",
                     [$this->input('username'), (int)$id]
@@ -203,9 +180,6 @@ class Users extends BaseController
         }
     }
 
-    /**
-     * DELETE /users/{id} - Delete a user
-     */
     public function destroy($id)
     {
         try {
