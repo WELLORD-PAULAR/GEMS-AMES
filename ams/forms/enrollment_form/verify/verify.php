@@ -33,9 +33,10 @@ use AMS\Models\EnrollmentSpecialNeeds;
 
 $db = new Database($pdo);
 
-// Fetch all enrollments for the dropdown
+// Fetch only enrollments currently in PROCESSING status for verification
 $enrollmentModel = new Enrollment($db);
-$enrollments = $enrollmentModel->all();
+$db->query("SELECT * FROM enrollment2 WHERE verification = ?", ['PROCESSING']);
+$enrollments = $db->fetchAll();
 
 $success = isset($_GET['success']) && $_GET['success'] == '1';
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;

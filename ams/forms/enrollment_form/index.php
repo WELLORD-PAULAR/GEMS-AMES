@@ -29,11 +29,7 @@
                     </p>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="text-center mb-4">
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                        Clear Message & Enroll Another Student
-                    </button>
-                </div>
+                
             <?php elseif ($error): ?>
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h5 class="alert-heading">❌ Enrollment Failed</h5>
@@ -46,6 +42,8 @@
                 Fill Dummy Data
             </button>
             <form id="enrollmentForm" method="POST" action="./process.php">
+                <!-- Always mark new submissions as PROCESSING for verification workflow -->
+                <input type="hidden" name="verification" value="PROCESSING">
                 <!-- Section 1: Enrollment Details -->
                 <?php include 'sections/enrollment_details.php'; ?>
 
