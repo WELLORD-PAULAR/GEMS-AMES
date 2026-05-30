@@ -30,10 +30,7 @@
             <label for="rl_school_id" class="form-label">Last School ID</label>
             <input type="number" id="rl_school_id" name="rl_school_id" class="form-control">
         </div>
-        <div class="col-md-6 mb-3">
-            <label for="user_account_id" class="form-label">User Account ID</label>
-            <input type="number" id="user_account_id" name="user_account_id" class="form-control" placeholder="Optional">
-        </div>
+        <input type="hidden" name="user_account_id" value="<?= htmlspecialchars($_SESSION['auth_user']['id'] ?? '') ?>">
         <div class="col-md-6 mb-3">
             <label for="li_learning_modality" class="form-label">Learning Modality</label>
             <select id="li_learning_modality" name="li_learning_modality" class="form-select">

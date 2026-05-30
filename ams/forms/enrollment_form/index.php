@@ -12,7 +12,6 @@
         <div class="enrollment-container">
             <h1>Student Enrollment Form</h1>
             <p>Complete all sections below to submit a new student enrollment.</p>
-
             <!-- Success/Error Message Display -->
             <?php
                 $success = isset($_GET['success']) && $_GET['success'] == '1';
@@ -43,7 +42,9 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             <?php endif; ?>
-
+            <button type="button" class="btn btn-secondary btn-sm mb-3" onclick="fillDummyData()">
+                Fill Dummy Data
+            </button>
             <form id="enrollmentForm" method="POST" action="./process.php">
                 <!-- Section 1: Enrollment Details -->
                 <?php include 'sections/enrollment_details.php'; ?>

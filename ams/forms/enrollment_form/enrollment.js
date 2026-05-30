@@ -311,3 +311,148 @@ function resetForm() {
 
     window.scrollTo(0, 0);
 }
+
+function fillDummyData() {
+    const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+    };
+ 
+    const selectByValue = (id, value) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const opt = Array.from(el.options).find(o => o.value === value || o.text === value);
+        if (opt) el.value = opt.value;
+    };
+ 
+    // Lookup fields (mother tongue, religion, indigenous group) are replaced
+    // by the searchable widget — set both the visible search input and hidden input
+    const setLookup = (fieldId, label) => {
+        const searchInput = document.getElementById(fieldId + '_search');
+        const hiddenInput = document.querySelector(`input[type="hidden"][name="${fieldId}"]`);
+        if (!searchInput || !hiddenInput) return;
+ 
+        // Find the matching option from the loaded data
+        const wrapper = searchInput.closest('.searchable-select-wrapper');
+        // Options are stored on a sibling or we can scan the fetched data
+        // via the search input's parent wrapper — fall back to fetching inline
+        searchInput.value = label;
+ 
+        // Trigger input event so the widget filters and auto-selects the single match
+        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+ 
+        // After the 300ms auto-select timeout in the widget, the hidden input
+        // will be set. We mirror that here with a small delay too.
+        setTimeout(() => {
+            // If the widget's auto-select hasn't fired (>1 match), pick the first suggestion
+            if (!hiddenInput.value) {
+                const firstSuggestion = document.querySelector(
+                    `.searchable-select-wrapper:has(#${fieldId}_search) .lookup-suggestion`
+                );
+                if (firstSuggestion && firstSuggestion.dataset.value) {
+                    hiddenInput.value = firstSuggestion.dataset.value;
+                    searchInput.value = firstSuggestion.textContent;
+                    document.querySelectorAll('.lookup-suggestions').forEach(c => c.innerHTML = '');
+                }
+            }
+        }, 400);
+    };
+ 
+    // --- Section 1: Enrollment Details ---
+    set('ed_grade_level', 'Grade 3');
+    set('ed_lrn', '123456789012');
+    set('ed_school_year', '2025-2026');
+    set('rl_last_grade_level_completed', 'Grade 2');
+    set('rl_last_school_year_completed', '2024-2025');
+    set('rl_school_attended', 'Baguio Central School');
+    set('rl_school_id', '123456');
+    selectByValue('li_learning_modality', 'MODULAR (PRINT)');
+ 
+    // --- Section 2: Personal Information ---
+    set('pi_last_name', 'Santos');
+    set('pi_first_name', 'Maria');
+    set('pi_middle_name', 'Reyes');
+    set('pi_extension', '');
+    set('pi_birth_date', '2016-03-15');
+    selectByValue('pi_sex', 'FEMALE');
+    set('pi_place_of_birth', 'Baguio City');
+    selectByValue('pi_learning_classification', 'GRADED');
+    set('pi_psa_bcn', '123456789012');
+    set('ac_4ps_household_number', '');
+    set('pi__attended_early_learning_program_name', 'Sunshine Daycare Center');
+ 
+    // Searchable lookup fields
+    setLookup('pi_mother_tongue_id', 'Ilocano');
+    setLookup('pi_religion_id', 'Roman Catholic');
+    setLookup('ac_indigenous_group_id', 'Not Applicable');
+ 
+    // --- Section 3: Address ---
+    set('ca_house_number', '12');
+    set('ca_street_name', 'Magsaysay Ave');
+    set('ca_barangay', 'Brgy. Lualhati');
+    set('ca_municipality', 'Baguio City');
+    set('ca_provice', 'Benguet');
+    set('ca_country', 'Philippines');
+    set('ca_zipcode', '2600');
+    selectByValue('ca_address_status', 'Owned');
+ 
+    set('pa_house_number', '12');
+    set('pa_street_name', 'Magsaysay Ave');
+    set('pa_barangay', 'Brgy. Lualhati');
+    set('pa_municipality', 'Baguio City');
+    set('pa_province', 'Benguet');
+    set('pa_country', 'Philippines');
+    set('pa_zip_code', '2600');
+    selectByValue('pa_address_status', 'Owned');
+ 
+    // --- Section 4: Medical ---
+    set('mf_a_medicine', '');
+    set('mf_a_pollen', '');
+    set('mf_a_food', 'Shrimp');
+    set('mf_a_others', '');
+    set('mf_o_medical_conditions', '');
+    set('mf_o_others', '');
+    set('mf_sh_surgery_date', '');
+    set('mf_sh_hospital_name', '');
+    set('mf_sh_bodypart_affected', '');
+    set('mf_tm_type', '');
+    set('mf_tm_dosage_schedule', '');
+    set('mf_mc_cancer_type', '');
+    set('mf_mc_others', '');
+    set('mf_o_pertinent_information', 'Student has mild seafood allergy. No medication required.');
+    selectByValue('mf_exposure_c_v', '0');
+ 
+    // --- Section 5: Parents / Guardian ---
+    set('fi_last_name', 'Santos');
+    set('fi_first_name', 'Ricardo');
+    set('fi_middle_name', 'Cruz');
+    set('fi_contact_number', '09171234567');
+    set('fi_occupation', 'Engineer');
+    set('fi_relationship_status', 'Married');
+    set('fi_communication', 'Mobile');
+ 
+    set('mi_last_name', 'Santos');
+    set('mi_first_name', 'Lourdes');
+    set('mi_middle_name', 'Reyes');
+    set('mi_contact_number', '09187654321');
+    set('mi_occupation', 'Teacher');
+    set('mi_relationship_status', 'Married');
+    set('mi_communication', 'Mobile');
+ 
+    set('gi_last_name', '');
+    set('gi_first_name', '');
+    set('gi_middle_name', '');
+    set('gi_contact_number', '');
+    set('gi_occupation', '');
+    set('gi_relationship_status', '');
+    set('gi_communication', '');
+ 
+    selectByValue('ec_to_contact', 'MOTHER');
+ 
+    // --- Section 6: Special Needs ---
+    set('snep_a1_diagnosis', '');
+    set('snep_a2_manifestations', '');
+    selectByValue('snep_a1_sub_shpcd', 'NON-CANCER');
+    selectByValue('snep_a1_sub_vi', 'LOW-VISION');
+    selectByValue('snep_pwd_id', '0');
+    }
