@@ -38,6 +38,10 @@ $enrollmentModel = new Enrollment($db);
 $db->query("SELECT * FROM enrollment2 WHERE verification = ?", ['PROCESSING']);
 $enrollments = $db->fetchAll();
 
+// Load verification status options from the database
+$db->query("SELECT DISTINCT verification FROM enrollment2 WHERE verification IS NOT NULL ORDER BY verification ASC");
+$verificationStatuses = array_column($db->fetchAll(), 'verification');
+
 $success = isset($_GET['success']) && $_GET['success'] == '1';
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 ?>
@@ -214,6 +218,14 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                         <?php include '../sections/special_needs_info.php'; ?>
                     </div>
 
+                    <div class="mb-4">
+                        <label for="verificationStatus" class="form-label">Verification Status</label>
+                        <select id="verificationStatus" name="verification" class="form-select">
+                            <?php foreach ($verificationStatuses as $status): ?>
+                                <option value="<?php echo htmlspecialchars($status); ?>"><?php echo htmlspecialchars($status); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         <button type="button" class="btn btn-secondary" onclick="resetForm()">Cancel</button>
                         <button type="submit" class="btn btn-save-changes btn-lg">Save Changes</button>
@@ -300,6 +312,12 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                         }
                     }
                 });
+
+                const statusSelect = document.getElementById('verificationStatus');
+                if (statusSelect) {
+                    statusSelect.value = data.enrollment.verification || statusSelect.value;
+                }
+
                 // Show enrollment section if it has data
                 if (Object.values(data.enrollment).some(val => val)) {
                     document.getElementById('section-enrollment').style.display = 'block';
