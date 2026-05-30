@@ -47,7 +47,8 @@ try {
         'ed_grade_level', 'ed_lrn', 'ed_school_year', 'rl_last_grade_level_completed',
         'rl_last_school_year_completed', 'rl_school_attended', 'rl_school_id', 'pi_psa_bcn',
         'pi_last_name', 'pi_first_name', 'pi_middle_name', 'pi_extension', 'pi_birth_date',
-        'pi_sex', 'pi_place_of_birth', 'pi_learning_classification', 'ac_4ps_household_number'
+        'pi_sex', 'pi_place_of_birth', 'pi_learning_classification', 'ac_4ps_household_number',
+        'verification'
     ];
 
     $enrollmentData = [];
