@@ -452,7 +452,7 @@ function fillDummyData() {
     // --- Section 6: Special Needs ---
     set('snep_a1_diagnosis', '');
     set('snep_a2_manifestations', '');
-    selectByValue('snep_a1_sub_shpcd', 'NON-CANCER');
-    selectByValue('snep_a1_sub_vi', 'LOW-VISION');
+    selectByValue('snep_a1_sub_shpcd', 'NONE');
+    selectByValue('snep_a1_sub_vi', 'NONE');
     selectByValue('snep_pwd_id', '0');
     }

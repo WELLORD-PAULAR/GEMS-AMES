@@ -11,6 +11,7 @@
             <select id="snep_a1_sub_shpcd" name="snep_a1_sub_shpcd" class="form-select">
                 <option>CANCER</option>
                 <option>NON-CANCER</option>
+                <option>NONE</option>                
             </select>
         </div>
         <div class="col-md-6 mb-3">
@@ -18,6 +19,7 @@
             <select id="snep_a1_sub_vi" name="snep_a1_sub_vi" class="form-select">
                 <option>BLIND</option>
                 <option>LOW-VISION</option>
+                <option>NONE</option>     
             </select>
         </div>
         <div class="col-12 mb-3">
