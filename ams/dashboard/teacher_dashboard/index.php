@@ -50,8 +50,13 @@ if (!SessionManager::hasRole('TEACHER')) {
         </section>
 
         <section id="note">
-            <h3>Form Access <h3>
+            <h3>Form Access</h3>
+            <p>
                 <a href="../../forms/enrollment_form" class="button">Go to Enrollment Form</a>
+            </p>
+            <p>
+                <a href="../../forms/enrollment_form/verify/verify.php" class="button">Go to Verify Enrollments</a>
+            </p>
         </section>
     </main>
 </body>

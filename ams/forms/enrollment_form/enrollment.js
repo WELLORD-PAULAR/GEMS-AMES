@@ -155,6 +155,9 @@ function createSearchableSelect(selectElement, options, label) {
     hiddenInput.name = selectElement.name;
     hiddenInput.id = selectElement.id;
     hiddenInput.value = '';
+    // Keep a copy of the available options on the hidden input so other scripts
+    // (like the verification page) can map an ID back to a display label.
+    hiddenInput.dataset.options = JSON.stringify(options);
 
     const suggestionsContainer = document.createElement('div');
     suggestionsContainer.className = 'lookup-suggestions';

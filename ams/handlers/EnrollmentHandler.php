@@ -109,37 +109,75 @@ class EnrollmentHandler
             'pi_birth_date' => $data['pi_birth_date'] ?? null,
             'pi_sex' => $data['pi_sex'] ?? null,
             'pi_place_of_birth' => $data['pi_place_of_birth'] ?? null,
-            'pi_mother_tongue_id' => $data['pi_mother_tongue_id'] ?? null,
-            'pi_religion_id' => $data['pi_religion_id'] ?? null,
+            // these DB columns are NOT NULL in the schema; provide sensible
+            // defaults to avoid insert errors if the client omitted them
+            'pi_mother_tongue_id' => $data['pi_mother_tongue_id'] ?? 1,
+            'pi_religion_id' => $data['pi_religion_id'] ?? 1,
             'pi__attended_early_learning_program_name' => $data['pi__attended_early_learning_program_name'] ?? null,
             'pi_learning_classification' => $data['pi_learning_classification'] ?? null,
             'ac_indigenous_group_id' => $data['ac_indigenous_group_id'] ?? null,
             'ac_4ps_household_number' => $data['ac_4ps_household_number'] ?? null,
             'user_account_id' => $data['user_account_id'] ?? null,
             'li_learning_modality' => $data['li_learning_modality'] ?? null,
+            // enrollment verification status must be present (DB has no default)
+            'verification' => $data['verification'] ?? 'PROCESSING',
         ], fn($value) => $value !== null && $value !== '');
     }
 
     private function mapAddress(array $data): array
     {
-        return array_filter([
-            'ca_house_number' => $data['ca_house_number'] ?? null,
-            'ca_street_name' => $data['ca_street_name'] ?? null,
-            'ca_barangay' => $data['ca_barangay'] ?? null,
-            'ca_municipality' => $data['ca_municipality'] ?? null,
-            'ca_provice' => $data['ca_provice'] ?? null,
-            'ca_country' => $data['ca_country'] ?? null,
-            'ca_zipcode' => $data['ca_zipcode'] ?? null,
-            'ca_address_status' => $data['ca_address_status'] ?? null,
-            'pa_house_number' => $data['pa_house_number'] ?? null,
-            'pa_street_name' => $data['pa_street_name'] ?? null,
-            'pa_barangay' => $data['pa_barangay'] ?? null,
-            'pa_municipality' => $data['pa_municipality'] ?? null,
-            'pa_province' => $data['pa_province'] ?? null,
-            'pa_country' => $data['pa_country'] ?? null,
-            'pa_zip_code' => $data['pa_zip_code'] ?? null,
-            'pa_address_status' => $data['pa_address_status'] ?? null,
-        ], fn($value) => $value !== null && $value !== '');
+        // Address table requires many NOT NULL columns; when any address
+        // information is provided, fill missing fields with safe defaults
+        $defaults = [
+            'ca_house_number' => '',
+            'ca_street_name' => '',
+            'ca_barangay' => '',
+            'ca_municipality' => '',
+            'ca_provice' => '',
+            'ca_country' => 'Philippines',
+            'ca_zipcode' => 0,
+            'ca_address_status' => 'Owned',
+            'pa_house_number' => '',
+            'pa_street_name' => '',
+            'pa_barangay' => '',
+            'pa_municipality' => '',
+            'pa_province' => '',
+            'pa_country' => 'Philippines',
+            'pa_zip_code' => 0,
+            'pa_address_status' => 'Owned',
+        ];
+
+        $payload = array_merge($defaults, [
+            'ca_house_number' => $data['ca_house_number'] ?? $defaults['ca_house_number'],
+            'ca_street_name' => $data['ca_street_name'] ?? $defaults['ca_street_name'],
+            'ca_barangay' => $data['ca_barangay'] ?? $defaults['ca_barangay'],
+            'ca_municipality' => $data['ca_municipality'] ?? $defaults['ca_municipality'],
+            'ca_provice' => $data['ca_provice'] ?? $defaults['ca_provice'],
+            'ca_country' => $data['ca_country'] ?? $defaults['ca_country'],
+            'ca_zipcode' => $data['ca_zipcode'] ?? $defaults['ca_zipcode'],
+            'ca_address_status' => $data['ca_address_status'] ?? $defaults['ca_address_status'],
+            'pa_house_number' => $data['pa_house_number'] ?? $defaults['pa_house_number'],
+            'pa_street_name' => $data['pa_street_name'] ?? $defaults['pa_street_name'],
+            'pa_barangay' => $data['pa_barangay'] ?? $defaults['pa_barangay'],
+            'pa_municipality' => $data['pa_municipality'] ?? $defaults['pa_municipality'],
+            'pa_province' => $data['pa_province'] ?? $defaults['pa_province'],
+            'pa_country' => $data['pa_country'] ?? $defaults['pa_country'],
+            'pa_zip_code' => $data['pa_zip_code'] ?? $defaults['pa_zip_code'],
+            'pa_address_status' => $data['pa_address_status'] ?? $defaults['pa_address_status'],
+        ]);
+
+        // Only insert address if at least one non-default value was provided
+        $isProvided = false;
+        foreach ($data as $k => $v) {
+            if (str_starts_with($k, 'ca_') || str_starts_with($k, 'pa_')) {
+                if ($v !== null && $v !== '') {
+                    $isProvided = true;
+                    break;
+                }
+            }
+        }
+
+        return $isProvided ? $payload : [];
     }
 
     private function mapMedical(array $data): array
