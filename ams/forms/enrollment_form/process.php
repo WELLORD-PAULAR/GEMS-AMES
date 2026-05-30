@@ -18,9 +18,25 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$post = $_POST;
+
+$setFields = [
+    'li_learning_modality',
+    'mf_o_medical_conditions',
+    'mf_mc_conditions',
+    'snep_a1_diagnosis',
+    'snep_a2_manifestations',
+];
+
+foreach ($setFields as $field) {
+    if (isset($post[$field]) && is_array($post[$field])) {
+        $post[$field] = implode(',', $post[$field]);
+    }
+}
+
 $db = new Database($pdo);
 $handler = new EnrollmentHandler($db);
-$result = $handler->handle($_POST);
+$result = $handler->handle($post);
 
 session_start();
 $_SESSION['enrollment_result'] = $result;

@@ -18,10 +18,36 @@
             <label for="mf_a_others" class="form-label">Other Allergies</label>
             <input type="text" id="mf_a_others" name="mf_a_others" class="form-control">
         </div>
+
         <div class="col-12 mb-3">
-            <label for="mf_o_medical_conditions" class="form-label">Medical Conditions (comma-separated)</label>
-            <input type="text" id="mf_o_medical_conditions" name="mf_o_medical_conditions" class="form-control" placeholder="ASTHMA, DIABETES MELLITUS">
+            <label class="form-label">Medical Conditions</label>
+            <div class="d-flex flex-wrap gap-3">
+                <?php
+                $medConditions = [
+                    'ERROR OF REFRACTION',
+                    'SEIZURE',
+                    'ANEMIA',
+                    'FRACTURE/DISLOCATION',
+                    'ASTHMA',
+                    'HEART ILLNESS',
+                    'BLEEDING DISORDER',
+                ];
+                foreach ($medConditions as $condition):
+                    $id = 'mf_oc_' . preg_replace('/[^a-z0-9]/', '_', strtolower($condition));
+                ?>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           name="mf_o_medical_conditions[]"
+                           id="<?= $id ?>"
+                           value="<?= htmlspecialchars($condition) ?>">
+                    <label class="form-check-label" for="<?= $id ?>">
+                        <?= htmlspecialchars($condition) ?>
+                    </label>
+                </div>
+                <?php endforeach; ?>
+            </div>
         </div>
+
         <div class="col-12 mb-3">
             <label for="mf_o_others" class="form-label">Other Medical Conditions</label>
             <input type="text" id="mf_o_others" name="mf_o_others" class="form-control">
@@ -46,6 +72,35 @@
             <label for="mf_tm_dosage_schedule" class="form-label">Dosage / Schedule</label>
             <input type="text" id="mf_tm_dosage_schedule" name="mf_tm_dosage_schedule" class="form-control">
         </div>
+
+        <div class="col-12 mb-3">
+            <label class="form-label">Family Medical History / Chronic Conditions</label>
+            <div class="d-flex flex-wrap gap-3">
+                <?php
+                $chronicConditions = [
+                    'TUBERCOLOSIS',
+                    'DIABETES MELLITUS',
+                    'HYPERTENSION',
+                    'STROKE/ HEART ATTACK',
+                    'DEPRESSION',
+                    'KIDNEY PROBLEMS',
+                ];
+                foreach ($chronicConditions as $condition):
+                    $id = 'mf_mc_' . preg_replace('/[^a-z0-9]/', '_', strtolower($condition));
+                ?>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox"
+                           name="mf_mc_conditions[]"
+                           id="<?= $id ?>"
+                           value="<?= htmlspecialchars($condition) ?>">
+                    <label class="form-check-label" for="<?= $id ?>">
+                        <?= htmlspecialchars($condition) ?>
+                    </label>
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
         <div class="col-md-6 mb-3">
             <label for="mf_mc_cancer_type" class="form-label">Cancer Type</label>
             <input type="text" id="mf_mc_cancer_type" name="mf_mc_cancer_type" class="form-control">
