@@ -6,6 +6,8 @@
 document.addEventListener('DOMContentLoaded', async function() {
     // Initialize autocomplete for lookup fields
     await initAutocomplete();
+    // Force uppercase on text inputs and textareas as user types
+    forceUppercaseOnInputs();
 });
 
 /**
@@ -84,4 +86,30 @@ async function searchLookup(endpoint, query, selectId) {
     } catch (error) {
         console.error('Search failed:', error);
     }
+}
+
+/**
+ * Force uppercase for inputs and textareas while preserving cursor
+ */
+function forceUppercaseOnInputs(container = document) {
+    const selector = 'input[type="text"], textarea, input[data-uppercase]';
+    const inputs = container.querySelectorAll(selector);
+
+    inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            const el = e.target;
+            const value = el.value;
+            const upper = value.toUpperCase();
+            if (value === upper) return;
+
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            el.value = upper;
+            try {
+                el.setSelectionRange(start, end);
+            } catch (err) {
+                // ignore if element doesn't support selection (e.g., input type without selection)
+            }
+        }, { passive: true });
+    });
 }
