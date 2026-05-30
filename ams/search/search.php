@@ -32,12 +32,17 @@ try {
     echo json_encode([
         'success' => true,
         'data' => $results,
+        'count' => count($results),
+        'type' => $type,
+        'query' => $query,
         'timestamp' => date('c')
     ]);
 } catch (\Exception $e) {
     http_response_code(500);
     echo json_encode([
         'success' => false,
-        'message' => 'Search failed: ' . $e->getMessage()
+        'message' => 'Search failed: ' . $e->getMessage(),
+        'type' => $_GET['type'] ?? 'not specified',
+        'error_trace' => $e->getTraceAsString()
     ]);
 }

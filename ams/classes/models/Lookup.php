@@ -8,17 +8,34 @@ class Lookup extends Model
 {
     protected string $table = 'lookup_values';
 
+    // Map of lookup types to actual table names
+    private array $tableMap = [
+        'mother_tongue' => 'mother_tongue',
+        'religion' => 'religion',
+        'indigenous_group' => 'indigenous_group'
+    ];
+
     public function findByTypeAndQuery(string $type, string $query, int $limit = 10): array
     {
-        $sql = "SELECT * FROM {$this->table} WHERE type = ? AND (name LIKE ? OR value LIKE ?) ORDER BY name LIMIT ?";
-        $this->db->query($sql, [$type, "%{$query}%", "%{$query}%", $limit]);
+        if (!isset($this->tableMap[$type])) {
+            throw new \InvalidArgumentException('Invalid lookup type: ' . $type);
+        }
+
+        $tableName = $this->tableMap[$type];
+        $sql = "SELECT id, name FROM {$tableName} WHERE (name LIKE ? OR id LIKE ?) ORDER BY name LIMIT ?";
+        $this->db->query($sql, ["%{$query}%", "%{$query}%", $limit]);
         return $this->db->fetchAll();
     }
 
     public function findAllByType(string $type, int $limit = 50): array
     {
-        $sql = "SELECT * FROM {$this->table} WHERE type = ? ORDER BY name LIMIT ?";
-        $this->db->query($sql, [$type, $limit]);
+        if (!isset($this->tableMap[$type])) {
+            throw new \InvalidArgumentException('Invalid lookup type: ' . $type);
+        }
+
+        $tableName = $this->tableMap[$type];
+        $sql = "SELECT id, name FROM {$tableName} ORDER BY name LIMIT ?";
+        $this->db->query($sql, [$limit]);
         return $this->db->fetchAll();
     }
 }

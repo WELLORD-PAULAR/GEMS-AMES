@@ -26,7 +26,7 @@ session_start();
 $_SESSION['enrollment_result'] = $result;
 
 if ($result['success']) {
-    header('Location: ./index.php?success=1');
+    header('Location: ./index.php?success=1&enrollment_id=' . urlencode($result['enrollment_id']));
 } else {
     header('Location: ./index.php?error=' . urlencode($result['message']));
 }

@@ -28,18 +28,20 @@ class SearchHandler
     public function getAll(string $type, int $limit = 50): array
     {
         if (!isset($this->lookupMap[$type])) {
-            throw new \InvalidArgumentException('Invalid lookup type');
+            throw new \InvalidArgumentException('Invalid lookup type: ' . $type);
         }
 
-        return $this->lookup->findAllByType($type, $limit);
+        $dbType = $this->lookupMap[$type];
+        return $this->lookup->findAllByType($dbType, $limit);
     }
 
     public function search(string $type, string $query, int $limit = 10): array
     {
         if (!isset($this->lookupMap[$type])) {
-            throw new \InvalidArgumentException('Invalid lookup type');
+            throw new \InvalidArgumentException('Invalid lookup type: ' . $type);
         }
 
-        return $this->lookup->findByTypeAndQuery($type, $query, $limit);
+        $dbType = $this->lookupMap[$type];
+        return $this->lookup->findByTypeAndQuery($dbType, $query, $limit);
     }
 }

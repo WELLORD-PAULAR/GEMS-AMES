@@ -2,7 +2,91 @@
 document.addEventListener('DOMContentLoaded', async function() {
     await initAutocomplete();
     forceUppercaseOnInputs();
+    setupFormValidation();
+
+    window.debugLookups = function() {
+        console.log('\n🔍 CURRENT LOOKUP VALUES:');
+        const fields = [
+            { id: 'pi_mother_tongue_id', label: 'Mother Tongue' },
+            { id: 'pi_religion_id', label: 'Religion' },
+            { id: 'ac_indigenous_group_id', label: 'Indigenous Group' }
+        ];
+        fields.forEach(field => {
+            const hiddenInput = document.querySelector(`input[type="hidden"][name="${field.id}"]`);
+            const searchInput = document.getElementById(field.id + '_search');
+            
+            console.log(`\n${field.label}:`);
+            if (hiddenInput) {
+                console.log(`  Hidden Input Value: "${hiddenInput.value}"`);
+            } else {
+                console.log(`  ❌ Hidden input NOT found in DOM`);
+            }
+            if (searchInput) {
+                console.log(`  Search Input Value: "${searchInput.value}"`);
+            } else {
+                console.log(`  ❌ Search input NOT found in DOM`);
+            }
+        });
+    };
+    
+    console.log('💡 Tip: Run debugLookups() in console to check current lookup values');
 });
+
+function setupFormValidation() {
+    const form = document.getElementById('enrollmentForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const lookupFields = [
+                { id: 'pi_mother_tongue_id', label: 'Mother Tongue' },
+                { id: 'pi_religion_id', label: 'Religion' },
+                { id: 'ac_indigenous_group_id', label: 'Indigenous Group' }
+            ];
+
+            console.log('📋 ========== FORM SUBMISSION VALIDATION ==========');
+            let allValid = true;
+
+            lookupFields.forEach(field => {
+                const hiddenInput = document.querySelector(`input[type="hidden"][name="${field.id}"]`);
+                if (hiddenInput) {
+                    const value = hiddenInput.value;
+                    const hasValue = value && value.toString().trim() !== '';
+                    
+                    console.log(`\n📌 ${field.label}:`);
+                    console.log(`   Element ID: ${hiddenInput.id}`);
+                    console.log(`   Element Type: ${hiddenInput.type}`);
+                    console.log(`   Current Value: "${value}"`);
+                    console.log(`   Value Type: ${typeof value}`);
+                    console.log(`   Value Length: ${value ? value.toString().length : 0}`);
+                    console.log(`   Is Valid: ${hasValue ? '✅ YES' : '❌ NO'}`);
+
+                    if (!hasValue) {
+                        console.warn(`   ⚠️  MISSING! This field is required.`);
+                        allValid = false;
+                    }
+                } else {
+                    console.error(`   ❌ Hidden input not found in DOM for ${field.id}!`);
+                    allValid = false;
+                }
+            });
+
+            const formData = new FormData(form);
+            console.log('\n📤 Form Data Being Submitted:');
+            for (let [key, value] of formData) {
+                console.log(`   ${key}: "${value}"`);
+            }
+
+            console.log('\n' + (allValid ? '✅ VALIDATION PASSED' : '❌ VALIDATION FAILED'));
+            console.log('================================================\n');
+
+            if (!allValid) {
+                e.preventDefault();
+                alert('❌ Please select values for all lookup fields:\n- Mother Tongue\n- Religion\n- Indigenous Group\n\nCheck browser console for details.');
+                return false;
+            }
+        });
+    }
+}
+
 
 async function initAutocomplete() {
     const lookupFields = [
@@ -29,14 +113,28 @@ async function initAutocomplete() {
 
 async function fetchLookupOptions(endpoint) {
     try {
-        const response = await fetch(`/GEMS-AMES/ams/search/search.php?type=${endpoint}`);
+        const url = `/GEMS-AMES/ams/search/search.php?type=${endpoint}`;
+        console.log(`🔍 Fetching: ${url}`);
+        
+        const response = await fetch(url);
         const data = await response.json();
         
+        console.log(`📨 Response for ${endpoint}:`, data);
+        
+        if (!response.ok) {
+            console.error(`❌ HTTP ${response.status} for ${endpoint}`);
+            return null;
+        }
+        
         if (data.success && data.data && Array.isArray(data.data)) {
+            console.log(`✓ ${endpoint}: ${data.count || data.data.length} records`);
             return data.data;
+        } else {
+            console.error(`❌ ${endpoint}: No success or data`, data);
+            return null;
         }
     } catch (error) {
-        console.error('Failed to load lookup options:', endpoint, error);
+        console.error(`❌ Failed to load lookup options for ${endpoint}:`, error);
     }
     return null;
 }
@@ -44,111 +142,138 @@ async function fetchLookupOptions(endpoint) {
 function createSearchableSelect(selectElement, options, label) {
     const wrapper = document.createElement('div');
     wrapper.className = 'searchable-select-wrapper';
-    wrapper.style.position = 'relative';
     
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
-    searchInput.placeholder = `Search ${label}...`;
+    searchInput.placeholder = `Type to search ${label}...`;
     searchInput.className = 'lookup-search-input';
-    searchInput.style.width = '100%';
-    searchInput.style.padding = '8px';
-    searchInput.style.marginBottom = '4px';
-    searchInput.style.border = '1px solid #ccc';
-    searchInput.style.borderRadius = '4px';
-    
-    searchInput.name = selectElement.name;
-    searchInput.id = selectElement.id;
+    searchInput.id = selectElement.id + '_search';
+    searchInput.autocomplete = 'off';
 
-    const dropdownContainer = document.createElement('div');
-    dropdownContainer.className = 'lookup-dropdown';
-    dropdownContainer.style.position = 'absolute';
-    dropdownContainer.style.top = '100%';
-    dropdownContainer.style.left = '0';
-    dropdownContainer.style.right = '0';
-    dropdownContainer.style.backgroundColor = 'white';
-    dropdownContainer.style.border = '1px solid #ccc';
-    dropdownContainer.style.borderRadius = '4px';
-    dropdownContainer.style.maxHeight = '200px';
-    dropdownContainer.style.overflowY = 'auto';
-    dropdownContainer.style.display = 'none';
-    dropdownContainer.style.zIndex = '1000';
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = selectElement.name;
+    hiddenInput.id = selectElement.id;
+    hiddenInput.value = '';
+
+    const suggestionsContainer = document.createElement('div');
+    suggestionsContainer.className = 'lookup-suggestions';
     
-    function populateDropdown(filteredOptions) {
-        dropdownContainer.innerHTML = '';
+    let currentSuggestions = [];
+    let selectedIndex = -1;
+
+    function updateSuggestions(query) {
+        suggestionsContainer.innerHTML = '';
+        selectedIndex = -1;
         
-        const clearOption = document.createElement('div');
-        clearOption.className = 'lookup-option';
-        clearOption.textContent = '-- Clear --';
-        clearOption.style.padding = '8px';
-        clearOption.style.cursor = 'pointer';
-        clearOption.style.borderBottom = '1px solid #eee';
-        clearOption.addEventListener('click', () => {
-            searchInput.value = '';
-            selectElement.value = '';
-            dropdownContainer.style.display = 'none';
-        });
-        dropdownContainer.appendChild(clearOption);
-        
-        filteredOptions.forEach(item => {
-            const option = document.createElement('div');
-            option.className = 'lookup-option';
-            option.dataset.value = item.id || item.value;
-            option.textContent = item.name || item.label;
-            option.style.padding = '8px';
-            option.style.cursor = 'pointer';
-            option.style.borderBottom = '1px solid #eee';
-            option.style.transition = 'background-color 0.2s';
+        if (!query || query.length < 1) {
+            currentSuggestions = [];
+            return;
+        }
+
+        const queryLower = query.toLowerCase();
+        currentSuggestions = options.filter(item => 
+            (item.name || item.label).toLowerCase().includes(queryLower)
+        ).slice(0, 5); // Limit to 5 suggestions
+
+        if (currentSuggestions.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'lookup-suggestion';
+            noResults.textContent = 'No matches found';
+            noResults.style.color = '#999';
+            noResults.style.pointerEvents = 'none';
+            suggestionsContainer.appendChild(noResults);
+            return;
+        }
+
+        currentSuggestions.forEach((item, index) => {
+            const suggestionEl = document.createElement('div');
+            suggestionEl.className = 'lookup-suggestion';
+            suggestionEl.textContent = item.name || item.label;
+            suggestionEl.dataset.index = index;
+            suggestionEl.dataset.value = item.id || item.value;
             
-            option.addEventListener('mouseenter', () => {
-                option.style.backgroundColor = '#f0f0f0';
-            });
-            option.addEventListener('mouseleave', () => {
-                option.style.backgroundColor = 'transparent';
-            });
-            
-            option.addEventListener('click', () => {
-                searchInput.value = item.name || item.label;
-                selectElement.value = item.id || item.value;
-                dropdownContainer.style.display = 'none';
+            suggestionEl.addEventListener('click', () => {
+                selectSuggestion(item);
             });
             
-            dropdownContainer.appendChild(option);
+            suggestionsContainer.appendChild(suggestionEl);
         });
     }
-    
-    searchInput.addEventListener('focus', () => {
-        dropdownContainer.style.display = 'block';
-        populateDropdown(options);
-    });
-    
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
+
+    function selectSuggestion(item) {
+        searchInput.value = item.name || item.label;
+        const idValue = item.id || item.value;
+        hiddenInput.value = idValue;  // Set the HIDDEN INPUT value
         
-        if (query.length === 0) {
-            populateDropdown(options);
-            dropdownContainer.style.display = 'block';
-        } else {
-            const filtered = options.filter(item => 
-                (item.name || item.label).toLowerCase().includes(query)
-            );
-            populateDropdown(filtered);
-            dropdownContainer.style.display = filtered.length > 0 ? 'block' : 'none';
+        console.log(`✅ Selected ${label}: "${item.name || item.label}" -> ID: "${idValue}"`);
+        console.log(`   Hidden input now has value: "${hiddenInput.value}"`);
+        
+        suggestionsContainer.innerHTML = '';
+        currentSuggestions = [];
+        selectedIndex = -1;
+    }
+
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value;
+        updateSuggestions(query);
+
+        if (currentSuggestions.length === 1) {
+            setTimeout(() => {
+                selectSuggestion(currentSuggestions[0]);
+            }, 300);
         }
     });
 
-    searchInput.addEventListener('blur', () => {
-        setTimeout(() => {
-            dropdownContainer.style.display = 'none';
-        }, 200);
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            selectedIndex = Math.min(selectedIndex + 1, currentSuggestions.length - 1);
+            highlightSuggestion();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            selectedIndex = Math.max(selectedIndex - 1, -1);
+            highlightSuggestion();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (selectedIndex >= 0 && selectedIndex < currentSuggestions.length) {
+                selectSuggestion(currentSuggestions[selectedIndex]);
+            }
+        } else if (e.key === 'Escape') {
+            suggestionsContainer.innerHTML = '';
+            currentSuggestions = [];
+            selectedIndex = -1;
+        }
     });
-    
+
+    function highlightSuggestion() {
+        const suggestions = suggestionsContainer.querySelectorAll('.lookup-suggestion');
+        suggestions.forEach((el, idx) => {
+            el.classList.toggle('highlighted', idx === selectedIndex);
+        });
+    }
+
+    searchInput.addEventListener('focus', () => {
+        if (searchInput.value && !hiddenInput.value) {
+            searchInput.value = '';
+        }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            suggestionsContainer.innerHTML = '';
+            currentSuggestions = [];
+        }
+    });
+
     selectElement.parentNode.insertBefore(wrapper, selectElement);
     wrapper.appendChild(searchInput);
-    wrapper.appendChild(dropdownContainer);
-    selectElement.style.display = 'none';
+    wrapper.appendChild(suggestionsContainer);
+    wrapper.appendChild(hiddenInput);
+    selectElement.remove();
 }
 function forceUppercaseOnInputs(container = document) {
-    const selector = 'input[type="text"], textarea, input[data-uppercase]';
+    const selector = 'input[type="text"]:not(.lookup-search-input), textarea, input[data-uppercase]';
     const inputs = container.querySelectorAll(selector);
 
     inputs.forEach(input => {
@@ -168,4 +293,21 @@ function forceUppercaseOnInputs(container = document) {
             }
         }, { passive: true });
     });
+}
+
+function resetForm() {
+    window.history.replaceState({}, document.title, window.location.pathname);
+    document.getElementById('enrollmentForm').reset();
+
+    const searchInputs = document.querySelectorAll('.lookup-search-input');
+    searchInputs.forEach(input => {
+        input.value = '';
+    });
+
+    const hiddenInputs = document.querySelectorAll('input[type="hidden"][name*="tongue"], input[type="hidden"][name*="religion"], input[type="hidden"][name*="indigenous"]');
+    hiddenInputs.forEach(input => {
+        input.value = '';
+    });
+
+    window.scrollTo(0, 0);
 }
