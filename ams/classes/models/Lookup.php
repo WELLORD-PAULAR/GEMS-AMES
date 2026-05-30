@@ -2,9 +2,11 @@
 
 namespace AMS\Models;
 
+require_once __DIR__ . '/../Model.php';
+
 class Lookup extends Model
 {
-    protected $table = 'lookup_values';
+    protected string $table = 'lookup_values';
 
     public function findByTypeAndQuery(string $type, string $query, int $limit = 10): array
     {
@@ -20,3 +22,4 @@ class Lookup extends Model
         return $this->db->fetchAll();
     }
 }
+?>

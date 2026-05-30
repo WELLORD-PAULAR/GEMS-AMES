@@ -2,9 +2,11 @@
 
 namespace AMS\Models;
 
+require_once __DIR__ . '/../Model.php';
+
 class User extends Model
 {
-    protected $table = 'user_account';
+    protected string $table = 'user_account';
 
     public function findByUsername(string $username): ?self
     {
@@ -53,3 +55,4 @@ class User extends Model
         return $this->db->fetchAll();
     }
 }
+?>

@@ -2,7 +2,10 @@
 
 namespace AMS\Models;
 
+require_once __DIR__ . '/../Model.php';
+
 class EnrollmentMedical extends Model
 {
-    protected $table = 'enrollment_medical';
+    protected string $table = 'enrollment_medical';
 }
+?>

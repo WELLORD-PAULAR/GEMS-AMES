@@ -50,8 +50,8 @@ if (!SessionManager::hasRole('TEACHER')) {
         </section>
 
         <section id="note">
-            <h3>System Status</h3>
-            <p>The legacy REST endpoint controller layer has been removed. This dashboard is a server-side skeleton page for authenticated Teacher users.</p>
+            <h3>Form Access <h3>
+                <a href="../../forms/enrollment_form" class="button">Go to Enrollment Form</a>
         </section>
     </main>
 </body>
