@@ -453,8 +453,8 @@ function fillDummyData() {
     selectByValue('ec_to_contact', 'MOTHER');
  
     // --- Section 6: Special Needs ---
-    set('snep_a1_diagnosis', '');
-    set('snep_a2_manifestations', '');
+    set('snep_a1_diagnosis', 'NONE');
+    set('snep_a2_manifestations', 'NONE');
     selectByValue('snep_a1_sub_shpcd', 'NONE');
     selectByValue('snep_a1_sub_vi', 'NONE');
     selectByValue('snep_pwd_id', '0');
