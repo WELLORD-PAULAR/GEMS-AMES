@@ -23,7 +23,7 @@ try {
 
     $type = $_GET['type'];
     $query = trim($_GET['q'] ?? '');
-    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 100;
+    $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 1000;
 
     $results = $query !== ''
         ? $handler->search($type, $query, $limit)
