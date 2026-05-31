@@ -31,9 +31,29 @@ use AMS\Models\EnrollmentSpecialNeeds;
 $db = new Database($pdo);
 
 $enrollmentModel = new Enrollment($db);
-$db->query("SELECT * FROM enrollment2 WHERE verification = ?", ['PROCESSING']);
-$enrollments = $db->fetchAll();
+$db->query("SELECT * FROM enrollment2 ORDER BY verification, pi_first_name, pi_last_name");
+$allEnrollments = $db->fetchAll();
+
+$enrollmentsByStatus = [
+    'PENDING' => [],
+    'VERIFIED' => [],
+    'REJECTED' => []
+];
+
+foreach ($allEnrollments as $enrollment) {
+    $status = strtoupper(trim($enrollment['verification'] ?? ''));
+    if ($status === 'VERIFIED') {
+        $enrollmentsByStatus['VERIFIED'][] = $enrollment;
+    } elseif ($status === 'REJECTED') {
+        $enrollmentsByStatus['REJECTED'][] = $enrollment;
+    } else {
+        $enrollmentsByStatus['PENDING'][] = $enrollment;
+    }
+}
+
 $verificationStatuses = ['VERIFIED', 'PROCESSING', 'REJECTED'];
+$currentStatus = $_GET['status'] ?? 'PENDING';
+$enrollments = $enrollmentsByStatus[$currentStatus] ?? [];
 
 $success = isset($_GET['success']) && $_GET['success'] == '1';
 $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
@@ -75,20 +95,44 @@ $error = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 </div>
             <?php endif; ?>
 
+            <!-- Status Filter -->
+            <div class="enrollment-selector-container mb-3">
+                <h2>Filter by Status</h2>
+                <div class="enrollment-dropdown">
+                    <div class="flex-grow">
+                        <label for="statusFilter" class="form-label">Select verification status:</label>
+                        <select id="statusFilter" class="form-select" onchange="filterByStatus(this.value)">
+                            <option value="PENDING" <?php echo $currentStatus === 'PENDING' ? 'selected' : ''; ?>>Pending</option>
+                            <option value="VERIFIED" <?php echo $currentStatus === 'VERIFIED' ? 'selected' : ''; ?>>Verified</option>
+                            <option value="REJECTED" <?php echo $currentStatus === 'REJECTED' ? 'selected' : ''; ?>>Rejected</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
             <!-- Enrollment Selector -->
             <div class="enrollment-selector-container">
                 <h2>Select Enrollment</h2>
                 <div class="enrollment-dropdown">
-                    <div class="flex-grow">
-                        <label for="enrollmentSelect" class="form-label">Choose a student enrollment:</label>
-                        <select id="enrollmentSelect" class="form-select" onchange="loadEnrollmentData(this.value)">
-                            <option value="">-- Select an enrollment --</option>
-                            <?php foreach ($enrollments as $enrollment): ?>
-                                <option value="<?php echo htmlspecialchars($enrollment['fk_full_name_bd']); ?>">
-                                    <?php echo htmlspecialchars($enrollment['pi_first_name'] . ' ' . $enrollment['pi_last_name'] . ' (' . $enrollment['fk_full_name_bd'] . ')'); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="enrollmentSelect" class="form-label">Choose a student enrollment:</label>
+                            <select id="enrollmentSelect" class="form-select" onchange="loadEnrollmentData(this.value)">
+                                <option value="">-- Select an enrollment --</option>
+                                <?php foreach ($enrollments as $enrollment): ?>
+                                    <option value="<?php echo htmlspecialchars($enrollment['fk_full_name_bd']); ?>" data-grade="<?php echo htmlspecialchars($enrollment['ed_grade_level'] ?? ''); ?>">
+                                        <?php echo htmlspecialchars($enrollment['pi_first_name'] . ' ' . $enrollment['pi_last_name'] . ' (' . $enrollment['fk_full_name_bd'] . ')'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="gradeSort" class="form-label">Sort by grade level:</label>
+                            <select id="gradeSort" class="form-select">
+                                <option value="asc">Ascending</option>
+                                <option value="desc">Descending</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

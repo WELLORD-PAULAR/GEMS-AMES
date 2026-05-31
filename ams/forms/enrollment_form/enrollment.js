@@ -1,6 +1,8 @@
+let autocompleteReady = Promise.resolve();
 
 document.addEventListener('DOMContentLoaded', async function() {
-    await initAutocomplete();
+    autocompleteReady = initAutocomplete();
+    await autocompleteReady;
     forceUppercaseOnInputs();
     setupFormValidation();
 
@@ -205,9 +207,10 @@ function createSearchableSelect(selectElement, options, label) {
     }
 
     function selectSuggestion(item) {
+        if (!item) return;
         searchInput.value = item.name || item.label;
         const idValue = item.id || item.value;
-        hiddenInput.value = idValue;  // Set the HIDDEN INPUT value
+        hiddenInput.value = idValue;
         
         console.log(`✅ Selected ${label}: "${item.name || item.label}" -> ID: "${idValue}"`);
         console.log(`   Hidden input now has value: "${hiddenInput.value}"`);
@@ -222,8 +225,11 @@ function createSearchableSelect(selectElement, options, label) {
         updateSuggestions(query);
 
         if (currentSuggestions.length === 1) {
+            const autoSelectCandidate = currentSuggestions[0];
             setTimeout(() => {
-                selectSuggestion(currentSuggestions[0]);
+                if (autoSelectCandidate && currentSuggestions[0] === autoSelectCandidate) {
+                    selectSuggestion(autoSelectCandidate);
+                }
             }, 300);
         }
     });
@@ -315,7 +321,8 @@ function resetForm() {
     window.scrollTo(0, 0);
 }
 
-function fillDummyData() {
+async function fillDummyData() {
+    await autocompleteReady;
     const set = (id, value) => {
         const el = document.getElementById(id);
         if (el) el.value = value;
@@ -323,9 +330,16 @@ function fillDummyData() {
 
     const selectByValue = (id, value) => {
         const el = document.getElementById(id);
-        if (!el) return;
-        const opt = Array.from(el.options).find(o => o.value === value || o.text === value);
-        if (opt) el.value = opt.value;
+        if (!el) {
+            console.warn(`selectByValue: Element with id "${id}" not found`);
+            return;
+        }
+        try {
+            el.value = String(value);
+            el.dispatchEvent(new Event('change', { bubbles: true }));
+        } catch (err) {
+            console.error(`selectByValue error for ${id}:`, err);
+        }
     };
 
     const checkBoxes = (name, values) => {
@@ -339,25 +353,24 @@ function fillDummyData() {
         const hiddenInput = document.querySelector(`input[type="hidden"][name="${fieldId}"]`);
         if (!searchInput || !hiddenInput) return;
 
-        searchInput.value = label;
-        searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-
-        setTimeout(() => {
-            if (!hiddenInput.value) {
-                const firstSuggestion = document.querySelector(
-                    `.searchable-select-wrapper:has(#${fieldId}_search) .lookup-suggestion`
-                );
-                if (firstSuggestion && firstSuggestion.dataset.value) {
-                    hiddenInput.value = firstSuggestion.dataset.value;
-                    searchInput.value = firstSuggestion.textContent;
-                    document.querySelectorAll('.lookup-suggestions').forEach(c => c.innerHTML = '');
-                }
+        try {
+            const options = JSON.parse(hiddenInput.dataset.options || '[]');
+            const match = options.find(o =>
+                (o.name || o.label || '').toLowerCase() === label.toLowerCase()
+            );
+            if (match) {
+                searchInput.value = match.name || match.label;
+                hiddenInput.value = match.id || match.value;
+            } else {
+                console.warn(`setLookup: no match found for "${label}" in field "${fieldId}"`);
             }
-        }, 400);
+        } catch (e) {
+            console.error(`setLookup: failed to parse options for "${fieldId}"`, e);
+        }
     };
 
     // --- Section 1: Enrollment Details ---
-    set('ed_grade_level', 'Grade 3');
+    selectByValue('ed_grade_level', '2');
     set('ed_lrn', '123456789012');
     set('ed_school_year', '2025-2026');
     set('rl_last_grade_level_completed', 'Grade 2');

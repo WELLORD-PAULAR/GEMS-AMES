@@ -1,3 +1,49 @@
+        function filterByStatus(status) {
+            window.location.href = './index.php?status=' + encodeURIComponent(status);
+        }
+
+        function getGradeSortValue(gradeText) {
+            if (!gradeText) return Number.MAX_SAFE_INTEGER;
+            if (/Kindergarten|KD|K/i.test(gradeText)) return 0;
+            const match = gradeText.match(/\d+/);
+            return match ? parseInt(match[0], 10) : Number.MAX_SAFE_INTEGER;
+        }
+
+        function sortEnrollmentsByGrade(direction) {
+            const select = document.getElementById('enrollmentSelect');
+            const options = Array.from(select.options).slice(1);
+            const emptyOption = select.options[0];
+            
+            options.sort((a, b) => {
+                const aGrade = a.getAttribute('data-grade') || '';
+                const bGrade = b.getAttribute('data-grade') || '';
+                
+                const aText = a.textContent.split('(')[0].trim();
+                const bText = b.textContent.split('(')[0].trim();
+                
+                const aGradeVal = getGradeSortValue(aGrade);
+                const bGradeVal = getGradeSortValue(bGrade);
+                
+                if (aGradeVal === bGradeVal) {
+                    return aText.localeCompare(bText);
+                }
+                return direction === 'asc' ? aGradeVal - bGradeVal : bGradeVal - aGradeVal;
+            });
+            
+            select.innerHTML = '';
+            select.appendChild(emptyOption);
+            options.forEach(opt => select.appendChild(opt));
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const gradeSortControl = document.getElementById('gradeSort');
+            if (gradeSortControl) {
+                gradeSortControl.addEventListener('change', function() {
+                    sortEnrollmentsByGrade(this.value);
+                });
+            }
+        });
+
         function loadEnrollmentData(enrollmentId) {
             if (!enrollmentId) {
                 document.getElementById('enrollmentDetails').classList.remove('show');
@@ -214,3 +260,25 @@
                 alert('Error saving enrollment');
             });
         });
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const selectedEnrollment = params.get('selected');
+            const status = params.get('status');
+            
+            if (status) {
+                const statusFilter = document.getElementById('statusFilter');
+                if (statusFilter) {
+                    statusFilter.value = status;
+                }
+            }
+            
+            if (selectedEnrollment) {
+                const dropdown = document.getElementById('enrollmentSelect');
+                if (dropdown) {
+                    dropdown.value = selectedEnrollment;
+                }
+                if (typeof loadEnrollmentData === 'function') {
+                    loadEnrollmentData(selectedEnrollment);
+                }
+            }
+        })();
