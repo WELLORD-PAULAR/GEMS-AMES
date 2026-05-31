@@ -1,17 +1,19 @@
 {
-    "name": "acer/pdftk",
-    "authors": [
-        {
-            "name": "Genesis10293847",
-            "email": "201875464@s.ubaguio.edu"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Classes\\" : "./"
-        }
-    },
-    "require": {
-        "mikehaertl/php-pdftk": "^0.14.2"
+  "name": "gems/enrollment-pdf",
+  "description": "DepEd Basic Education Enrollment Form PDF generator",
+  "authors": [
+    {
+      "name": "Genesis10293847",
+      "email": "201875464@s.ubaguio.edu"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Classes\\": "./"
+    }
+  },
+  "require": {
+    "php": ">=8.1",
+    "tecnickcom/tcpdf": "^6.7"
+  }
 }
