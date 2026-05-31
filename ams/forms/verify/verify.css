@@ -73,3 +73,137 @@
         .form-section-locked {
             background-color: #f8f9fa;
         }
+
+        /* ── Search & Filter panel ───────────────────────────── */
+        .search-panel {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            padding: 20px 24px;
+            margin-bottom: 18px;
+        }
+        .search-panel .panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0d5fa8;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        .search-row .search-main {
+            flex: 1 1 260px;
+            min-width: 200px;
+        }
+        .search-row .filter-item {
+            flex: 0 0 140px;
+        }
+        .search-row .filter-item.wide {
+            flex: 0 0 180px;
+        }
+
+        /* ── Status filter tabs ──────────────────────────────── */
+        .status-tabs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .status-tab {
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: 2px solid #dee2e6;
+            background: #f8f9fa;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-tab .badge { font-size: 11px; }
+        .status-tab.active-all   { border-color: #0d5fa8; background: #0d5fa8; color: #fff; }
+        .status-tab.active-pending  { border-color: #ffc107; background: #fff8e1; color: #7d5800; }
+        .status-tab.active-verified { border-color: #198754; background: #e8f5e9; color: #145a32; }
+        .status-tab.active-rejected { border-color: #dc3545; background: #fdecea; color: #7b1a1a; }
+
+        /* ── Results table ───────────────────────────────────── */
+        .results-panel {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.08);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .results-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .results-header .title {
+            font-weight: 700;
+            font-size: 14px;
+            color: #333;
+        }
+        .results-count {
+            font-size: 13px;
+            color: #6c757d;
+        }
+        #resultsTable {
+            margin-bottom: 0;
+            font-size: 13.5px;
+        }
+        #resultsTable thead th {
+            background: #f4f7fb;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            color: #555;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+        #resultsTable tbody tr {
+            cursor: pointer;
+            transition: background .1s;
+        }
+        #resultsTable tbody tr:hover { background: #eef4ff !important; }
+        #resultsTable tbody tr.selected-row { background: #dbeafe !important; }
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11.5px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-verified  { background: #d1fae5; color: #065f46; }
+        .badge-pending   { background: #fef3c7; color: #78350f; }
+        .badge-rejected  { background: #fee2e2; color: #7f1d1d; }
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #aaa;
+        }
+        .no-results svg { margin-bottom: 12px; opacity: .4; }
+
+        /* ── Sort arrows ─────────────────────────────────────── */
+        th[data-sort] { cursor: pointer; user-select: none; }
+        th[data-sort]:hover { background: #e8eef8 !important; }
+        th[data-sort] .sort-icon { margin-left: 4px; opacity: .4; font-size: 10px; }
+        th[data-sort].sorted-asc .sort-icon::after  { content: ' ▲'; opacity: 1; }
+        th[data-sort].sorted-desc .sort-icon::after { content: ' ▼'; opacity: 1; }
+        th[data-sort]:not(.sorted-asc):not(.sorted-desc) .sort-icon::after { content: ' ⇅'; }
+
+        /* keep enrollment details full-width under table */
+        #enrollmentDetailsWrapper { margin-top: 8px; }

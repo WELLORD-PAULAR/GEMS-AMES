@@ -127,6 +127,24 @@
             box-shadow: 0 0 0 0.2rem rgba(13, 95, 168, 0.25);
         }
 
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-input {
+            margin: 0;
+            margin-top: 0.125rem;
+            flex-shrink: 0;
+        }
+
+        .form-check-label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
         /* Success/Error Alerts */
         .alert {
             border-radius: 8px;

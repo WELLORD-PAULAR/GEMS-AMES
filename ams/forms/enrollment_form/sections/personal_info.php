@@ -42,7 +42,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <label for="pi_psa_bcn" class="form-label">PSA Birth Certificate Number</label>
-            <input type="number" id="pi_psa_bcn" name="pi_psa_bcn" class="form-control">
+            <input type="text" id="pi_psa_bcn" name="pi_psa_bcn" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
             <label for="ac_4ps_household_number" class="form-label">4Ps Household Number</label>

@@ -40,35 +40,35 @@
             </select>
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_house_number" class="form-label">Parent/Guardian House Number</label>
+            <label for="pa_house_number" class="form-label">Permanent House Number</label>
             <input type="text" id="pa_house_number" name="pa_house_number" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_street_name" class="form-label">Parent/Guardian Street Name</label>
+            <label for="pa_street_name" class="form-label">Permanent Street Name</label>
             <input type="text" id="pa_street_name" name="pa_street_name" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_barangay" class="form-label">Parent/Guardian Barangay</label>
+            <label for="pa_barangay" class="form-label">Permanent Barangay</label>
             <input type="text" id="pa_barangay" name="pa_barangay" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_municipality" class="form-label">Parent/Guardian Municipality</label>
+            <label for="pa_municipality" class="form-label">Permanent Municipality</label>
             <input type="text" id="pa_municipality" name="pa_municipality" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_province" class="form-label">Parent/Guardian Province</label>
+            <label for="pa_province" class="form-label">Permanent Province</label>
             <input type="text" id="pa_province" name="pa_province" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_country" class="form-label">Parent/Guardian Country</label>
+            <label for="pa_country" class="form-label">Permanent Country</label>
             <input type="text" id="pa_country" name="pa_country" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_zip_code" class="form-label">Parent/Guardian Zipcode</label>
+            <label for="pa_zip_code" class="form-label">Permanent Zipcode</label>
             <input type="number" id="pa_zip_code" name="pa_zip_code" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
-            <label for="pa_address_status" class="form-label">Parent/Guardian Address Status</label>
+            <label for="pa_address_status" class="form-label">Permanent Address Status</label>
             <select id="pa_address_status" name="pa_address_status" class="form-select">
                 <option>Rental</option>
                 <option>Owned</option>

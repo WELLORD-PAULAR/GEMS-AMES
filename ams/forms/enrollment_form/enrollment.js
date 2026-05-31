@@ -115,7 +115,7 @@ async function initAutocomplete() {
 
 async function fetchLookupOptions(endpoint) {
     try {
-        const url = `/GEMS-AMES/ams/search/search.php?type=${endpoint}`;
+        const url = `/GEMS-AMES/ams/search/search.php?type=${endpoint}&limit=10000`;
         console.log(`🔍 Fetching: ${url}`);
         
         const response = await fetch(url);
@@ -157,8 +157,6 @@ function createSearchableSelect(selectElement, options, label) {
     hiddenInput.name = selectElement.name;
     hiddenInput.id = selectElement.id;
     hiddenInput.value = '';
-    // Keep a copy of the available options on the hidden input so other scripts
-    // (like the verification page) can map an ID back to a display label.
     hiddenInput.dataset.options = JSON.stringify(options);
 
     const suggestionsContainer = document.createElement('div');
@@ -179,7 +177,7 @@ function createSearchableSelect(selectElement, options, label) {
         const queryLower = query.toLowerCase();
         currentSuggestions = options.filter(item => 
             (item.name || item.label).toLowerCase().includes(queryLower)
-        ).slice(0, 5); // Limit to 5 suggestions
+        ).slice(0, 5);
 
         if (currentSuggestions.length === 0) {
             const noResults = document.createElement('div');
@@ -298,7 +296,6 @@ function forceUppercaseOnInputs(container = document) {
             try {
                 el.setSelectionRange(start, end);
             } catch (err) {
-                // ignore if element doesn't support selection (e.g., input type without selection)
             }
         }, { passive: true });
     });

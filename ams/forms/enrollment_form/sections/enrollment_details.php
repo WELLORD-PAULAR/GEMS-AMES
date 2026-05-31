@@ -17,7 +17,7 @@
         </div>
         <div class="col-md-6 mb-3">
             <label for="ed_lrn" class="form-label">LRN</label>
-            <input type="number" id="ed_lrn" name="ed_lrn" class="form-control" required>
+            <input type="number" id="ed_lrn" name="ed_lrn" class="form-control">
         </div>
         <div class="col-md-6 mb-3">
             <label for="ed_school_year" class="form-label">School Year</label>

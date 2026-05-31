@@ -99,12 +99,24 @@ unset($group);
                     <div class="card-body">
                         <h2 class="h5">Student Enrollment Management</h2>
                         <p class="text-muted mb-3">Student enrollments are grouped by verification status. Sort each list by grade level.</p>
-                        <div class="mb-3">
-                            <label for="sortOrder" class="form-label">Sort by grade</label>
-                            <select id="sortOrder" class="form-select form-select-sm w-auto">
-                                <option value="asc">Grade ascending</option>
-                                <option value="desc">Grade descending</option>
-                            </select>
+                        <div class="mb-3 d-flex gap-2 align-items-end flex-wrap">
+                            <div>
+                                <label for="gradeFilter" class="form-label">Filter by grade</label>
+                                <select id="gradeFilter" class="form-select form-select-sm w-auto">
+                                    <option value="">-- All Grades --</option>
+                                    <option value="Kindergarten">Kindergarten</option>
+                                    <option value="1">Grade 1</option>
+                                    <option value="2">Grade 2</option>
+                                    <option value="3">Grade 3</option>
+                                    <option value="4">Grade 4</option>
+                                    <option value="5">Grade 5</option>
+                                    <option value="6">Grade 6</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="studentSearch" class="form-label">Search student</label>
+                                <input type="text" id="studentSearch" class="form-control form-control-sm" placeholder="Name...">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,7 +134,7 @@ unset($group);
                             <div class="p-3 text-muted">No students in this group.</div>
                         <?php else: ?>
                             <div class="table-responsive">
-                                <table class="table table-striped table-hover mb-0">
+                                <table class="table table-striped table-hover mb-0 student-table">
                                     <thead class="table-light">
                                         <tr>
                                             <th scope="col">Student</th>
@@ -154,34 +166,6 @@ unset($group);
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function getGradeSortValue(text) {
-            const match = text.match(/\d+/);
-            if (!match) {
-                if (/K|KD|Kindergarten/i.test(text)) return 0;
-                return Number.MAX_SAFE_INTEGER;
-            }
-            return parseInt(match[0], 10);
-        }
-
-        function sortStudentTables(direction) {
-            document.querySelectorAll('.table tbody').forEach(tbody => {
-                const rows = Array.from(tbody.querySelectorAll('tr'));
-                rows.sort((a, b) => {
-                    const aGrade = getGradeSortValue(a.dataset.grade || '');
-                    const bGrade = getGradeSortValue(b.dataset.grade || '');
-                    if (aGrade === bGrade) {
-                        return a.textContent.trim().localeCompare(b.textContent.trim());
-                    }
-                    return direction === 'asc' ? aGrade - bGrade : bGrade - aGrade;
-                });
-                rows.forEach(row => tbody.appendChild(row));
-            });
-        }
-
-        document.getElementById('sortOrder').addEventListener('change', function () {
-            sortStudentTables(this.value);
-        });
-    </script>
+    <script src="teacher_dashboard.js"></script>
 </body>
 </html>
