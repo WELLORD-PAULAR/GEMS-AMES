@@ -1,9 +1,6 @@
 <?php
 session_start();
-
-// Check if user is authenticated and is a TEACHER
-require_once __DIR__ . '/../../../login/SessionManager.php';
-
+require_once __DIR__ . '/../../login/SessionManager.php';
 if (!SessionManager::isAuthenticated()) {
     http_response_code(401);
     echo json_encode(['success' => false, 'message' => 'Unauthorized']);
@@ -17,14 +14,14 @@ if ($user['role'] !== 'TEACHER') {
     exit;
 }
 
-require_once __DIR__ . '/../../../config/config.php';
-require_once __DIR__ . '/../../../classes/Database.php';
-require_once __DIR__ . '/../../../classes/Model.php';
-require_once __DIR__ . '/../../../classes/models/Enrollment.php';
-require_once __DIR__ . '/../../../classes/models/EnrollmentAddress.php';
-require_once __DIR__ . '/../../../classes/models/EnrollmentMedical.php';
-require_once __DIR__ . '/../../../classes/models/EnrollmentParents.php';
-require_once __DIR__ . '/../../../classes/models/EnrollmentSpecialNeeds.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../classes/Database.php';
+require_once __DIR__ . '/../../classes/Model.php';
+require_once __DIR__ . '/../../classes/models/Enrollment.php';
+require_once __DIR__ . '/../../classes/models/EnrollmentAddress.php';
+require_once __DIR__ . '/../../classes/models/EnrollmentMedical.php';
+require_once __DIR__ . '/../../classes/models/EnrollmentParents.php';
+require_once __DIR__ . '/../../classes/models/EnrollmentSpecialNeeds.php';
 
 use AMS\Database;
 use AMS\Models\Enrollment;
@@ -44,8 +41,6 @@ if (!$enrollmentId) {
 
 try {
     $db = new Database($pdo);
-
-    // Fetch enrollment data
     $enrollmentModel = new Enrollment($db);
     $db->query("SELECT * FROM enrollment2 WHERE fk_full_name_bd = ?", [$enrollmentId]);
     $enrollment = $db->fetch();
@@ -55,21 +50,45 @@ try {
         exit;
     }
 
-    // Fetch address data
     $db->query("SELECT * FROM enrollment_address2 WHERE fk_full_name_bd = ?", [$enrollmentId]);
     $address = $db->fetch();
 
-    // Fetch medical data
     $db->query("SELECT * FROM enrollment_medical2 WHERE fk_full_name_bd = ?", [$enrollmentId]);
     $medical = $db->fetch();
 
-    // Fetch parents data
+    if ($medical) {
+        if (!empty($medical['mf_o_medical_conditions'])) {
+            $medical['mf_o_medical_conditions'] = array_filter(explode(',', $medical['mf_o_medical_conditions']));
+        } else {
+            $medical['mf_o_medical_conditions'] = [];
+        }
+        
+        if (!empty($medical['mf_mc_conditions'])) {
+            $medical['mf_mc_conditions'] = array_filter(explode(',', $medical['mf_mc_conditions']));
+        } else {
+            $medical['mf_mc_conditions'] = [];
+        }
+    }
+
     $db->query("SELECT * FROM enrollment_parent2 WHERE fk_full_name_bd = ?", [$enrollmentId]);
     $parents = $db->fetch();
 
-    // Fetch special needs data
     $db->query("SELECT * FROM enrollment_special_needs2 WHERE fk_full_name_bd = ?", [$enrollmentId]);
     $specialNeeds = $db->fetch();
+
+    if ($specialNeeds) {
+        if (!empty($specialNeeds['snep_a1_diagnosis'])) {
+            $specialNeeds['snep_a1_diagnosis'] = array_filter(explode(',', $specialNeeds['snep_a1_diagnosis']));
+        } else {
+            $specialNeeds['snep_a1_diagnosis'] = [];
+        }
+        
+        if (!empty($specialNeeds['snep_a2_manifestations'])) {
+            $specialNeeds['snep_a2_manifestations'] = array_filter(explode(',', $specialNeeds['snep_a2_manifestations']));
+        } else {
+            $specialNeeds['snep_a2_manifestations'] = [];
+        }
+    }
 
     echo json_encode([
         'success' => true,

@@ -1,0 +1,75 @@
+
+        .enrollment-selector-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+        }
+
+        .enrollment-selector-container h2 {
+            color: #0d5fa8;
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .enrollment-dropdown {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .enrollment-dropdown .flex-grow {
+            flex-grow: 1;
+        }
+
+        .teacher-header {
+            background: #0d5fa8;
+            color: white;
+            padding: 15px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 20px;
+            margin-top: -30px;
+            margin-left: -30px;
+            margin-right: -30px;
+        }
+
+        .teacher-header p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .enrollment-details {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .enrollment-details.show {
+            display: block;
+        }
+
+        .btn-save-changes {
+            background-color: #28a745;
+            color: white;
+            font-weight: 600;
+        }
+
+        .btn-save-changes:hover {
+            background-color: #218838;
+            color: white;
+        }
+
+        .form-section-locked {
+            background-color: #f8f9fa;
+        }

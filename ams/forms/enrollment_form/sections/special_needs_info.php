@@ -7,18 +7,18 @@
             <div class="d-flex flex-wrap gap-3">
                 <?php
                 $diagnoses = [
-                    'ADHD' => 'ADHD',
-                    'ASD'  => 'ASD',
-                    'CP'   => 'CP',
-                    'E-B D'  => 'E-B D',
-                    'HI'   => 'HI',
-                    'ID'   => 'ID',
-                    'LD'   => 'LD',
-                    'MD'   => 'MD',
-                    'O/P H'  => 'O/P H',
-                    'S/L D'  => 'S/L D',
-                    'SHP/CD' => 'SHP/CD',
-                    'VI'   => 'VI',
+                    'ADHD' => 'Attention Deficit Hyperactivity Disorder',
+                    'ASD'  => 'Autism Spectrum Disorder',
+                    'CP'   => 'Cerebral Palsy',
+                    'E-B D'  => 'Emotional-Behavioral Disorder',
+                    'HI'   => 'Hearing Impairment',
+                    'ID'   => 'Intellectual Disability',
+                    'LD'   => 'Learning Disability',
+                    'MD'   => 'Multiple Disabilities',
+                    'O/P H'  => 'Orthopedic/Physical Handicap',
+                    'S/L D'  => 'Speech/Language Disorder',
+                    'SHP/CD' => 'Special Health Problem/Chronic Disease',
+                    'VI'   => 'Visual Impairment',
                     'NONE' => 'NONE',
                 ];
                 foreach ($diagnoses as $value => $label):
@@ -59,14 +59,14 @@
             <div class="d-flex flex-wrap gap-3">
                 <?php
                 $manifestations = [
-                    'DiAK'     => 'DiAK',
-                    'DiC'      => 'DiC',
-                    'DiDIB'    => 'DiDIB',
-                    'DiH'      => 'DiH',
-                    'DiM'      => 'DiM',
-                    'DiPAS'    => 'DiPAS',
-                    'DiRCPAaU' => 'DiRCPAaU',
-                    'DiS'      => 'DiS',
+                    'DiAK'     => 'Difficulty in Applying Knowledge',
+                    'DiC'      => 'Difficulty in Communicating',
+                    'DiDIB'    => 'Difficulty in Displaying Interpersonal Behavior',
+                    'DiH'      => 'Difficuty in Hearing',
+                    'DiM'      => 'Difficulty in Mobility',
+                    'DiPAS'    => 'Difficulty in Performing Adaptive Skills',
+                    'DiRCPAaU' => 'Difficulty in Remembering, Concentrating, Paying Attention and Understanding',
+                    'DiS'      => 'Difficulty in Seeing',
                     'NONE'     => 'NONE',
                 ];
                 foreach ($manifestations as $value => $label):

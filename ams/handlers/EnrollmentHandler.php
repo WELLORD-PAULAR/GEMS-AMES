@@ -109,8 +109,6 @@ class EnrollmentHandler
             'pi_birth_date' => $data['pi_birth_date'] ?? null,
             'pi_sex' => $data['pi_sex'] ?? null,
             'pi_place_of_birth' => $data['pi_place_of_birth'] ?? null,
-            // these DB columns are NOT NULL in the schema; provide sensible
-            // defaults to avoid insert errors if the client omitted them
             'pi_mother_tongue_id' => $data['pi_mother_tongue_id'] ?? 1,
             'pi_religion_id' => $data['pi_religion_id'] ?? 1,
             'pi__attended_early_learning_program_name' => $data['pi__attended_early_learning_program_name'] ?? null,
@@ -119,15 +117,12 @@ class EnrollmentHandler
             'ac_4ps_household_number' => $data['ac_4ps_household_number'] ?? null,
             'user_account_id' => $data['user_account_id'] ?? null,
             'li_learning_modality' => $data['li_learning_modality'] ?? null,
-            // enrollment verification status must be present (DB has no default)
             'verification' => $data['verification'] ?? 'PROCESSING',
         ], fn($value) => $value !== null && $value !== '');
     }
 
     private function mapAddress(array $data): array
     {
-        // Address table requires many NOT NULL columns; when any address
-        // information is provided, fill missing fields with safe defaults
         $defaults = [
             'ca_house_number' => '',
             'ca_street_name' => '',
@@ -166,7 +161,6 @@ class EnrollmentHandler
             'pa_address_status' => $data['pa_address_status'] ?? $defaults['pa_address_status'],
         ]);
 
-        // Only insert address if at least one non-default value was provided
         $isProvided = false;
         foreach ($data as $k => $v) {
             if (str_starts_with($k, 'ca_') || str_starts_with($k, 'pa_')) {

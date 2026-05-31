@@ -1,8 +1,6 @@
 <?php
 session_start();
-
-// Check if user is authenticated and is a TEACHER
-require_once __DIR__ . '/../../../login/SessionManager.php';
+require_once __DIR__ . '/../../login/SessionManager.php';
 
 if (!SessionManager::isAuthenticated()) {
     http_response_code(401);
@@ -17,8 +15,8 @@ if ($user['role'] !== 'TEACHER') {
     exit;
 }
 
-require_once __DIR__ . '/../../../config/config.php';
-require_once __DIR__ . '/../../../classes/Database.php';
+require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../classes/Database.php';
 
 use AMS\Database;
 
@@ -39,10 +37,8 @@ try {
         exit;
     }
 
-    // Begin transaction
     $db->beginTransaction();
 
-    // Prepare enrollment data
     $enrollmentFields = [
         'ed_grade_level', 'ed_lrn', 'ed_school_year', 'rl_last_grade_level_completed',
         'rl_last_school_year_completed', 'rl_school_attended', 'rl_school_id', 'pi_psa_bcn',
@@ -58,7 +54,6 @@ try {
         }
     }
 
-    // Update enrollment
     if (!empty($enrollmentData)) {
         $sets = [];
         $values = [];
@@ -72,7 +67,6 @@ try {
         $db->query($sql, $values);
     }
 
-    // Prepare address data
     $addressFields = [
         'ca_house_number', 'ca_street_name', 'ca_barangay', 'ca_municipality', 'ca_provice',
         'ca_country', 'ca_zipcode', 'ca_address_status', 'pa_house_number', 'pa_street_name',
@@ -86,11 +80,8 @@ try {
         }
     }
 
-    // Update or insert address
     if (!empty($addressData)) {
         $addressData['fk_full_name_bd'] = $fkFullNameBd;
-        
-        // Check if address exists
         $db->query("SELECT * FROM enrollment_address2 WHERE fk_full_name_bd = ?", [$fkFullNameBd]);
         $addressExists = $db->fetch();
 
@@ -115,7 +106,6 @@ try {
         }
     }
 
-    // Prepare medical data
     $medicalFields = [
         'mf_a_medicine', 'mf_a_pollen', 'mf_a_food', 'mf_a_others', 'mf_o_others',
         'mf_tm_type', 'mf_o_pertinent_information'
@@ -128,11 +118,8 @@ try {
         }
     }
 
-    // Update or insert medical
     if (!empty($medicalData)) {
         $medicalData['fk_full_name_bd'] = $fkFullNameBd;
-        
-        // Check if medical exists
         $db->query("SELECT * FROM enrollment_medical2 WHERE fk_full_name_bd = ?", [$fkFullNameBd]);
         $medicalExists = $db->fetch();
 
@@ -157,7 +144,6 @@ try {
         }
     }
 
-    // Prepare parents data
     $parentsFields = [
         'fi_last_name', 'fi_first_name', 'fi_middle_name', 'fi_contact_number', 'fi_occupation',
         'fi_communication', 'mi_last_name', 'mi_first_name', 'mi_middle_name', 'mi_contact_number',
@@ -172,11 +158,8 @@ try {
         }
     }
 
-    // Update or insert parents
     if (!empty($parentsData)) {
         $parentsData['fk_full_name_bd'] = $fkFullNameBd;
-        
-        // Check if parents exist
         $db->query("SELECT * FROM enrollment_parent2 WHERE fk_full_name_bd = ?", [$fkFullNameBd]);
         $parentsExist = $db->fetch();
 
@@ -201,23 +184,25 @@ try {
         }
     }
 
-    // Prepare special needs data
     $specialNeedsFields = [
-        'snep_a1_diagnosis', 'snep_a1_sub_shpcd', 'snep_a1_sub_vi'
+        'snep_a1_diagnosis', 'snep_a1_sub_shpcd', 'snep_a1_sub_vi', 'snep_a2_manifestations'
     ];
+    
+    $arrayFields = ['snep_a1_diagnosis', 'snep_a2_manifestations'];
 
     $specialNeedsData = [];
     foreach ($specialNeedsFields as $field) {
         if (isset($_POST[$field]) && $_POST[$field] !== '') {
-            $specialNeedsData[$field] = $_POST[$field];
+            if (in_array($field, $arrayFields) && is_array($_POST[$field])) {
+                $specialNeedsData[$field] = implode(',', $_POST[$field]);
+            } else {
+                $specialNeedsData[$field] = $_POST[$field];
+            }
         }
     }
 
-    // Update or insert special needs
     if (!empty($specialNeedsData)) {
         $specialNeedsData['fk_full_name_bd'] = $fkFullNameBd;
-        
-        // Check if special needs exist
         $db->query("SELECT * FROM enrollment_special_needs2 WHERE fk_full_name_bd = ?", [$fkFullNameBd]);
         $specialNeedsExist = $db->fetch();
 
@@ -242,7 +227,6 @@ try {
         }
     }
 
-    // Commit transaction
     $db->commit();
 
     echo json_encode([
