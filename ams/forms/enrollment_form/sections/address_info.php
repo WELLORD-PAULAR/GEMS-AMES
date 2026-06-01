@@ -39,6 +39,13 @@
                 <option>Inherited</option>
             </select>
         </div>
+    <div class="row mb-3">
+        <div class="col-12 d-flex justify-content-center">
+            <button type="button" id="copyAddressBtn" class="btn btn-secondary">
+                Copy Current Address
+            </button>
+        </div>
+    </div>
         <div class="col-md-6 mb-3">
             <label for="pa_house_number" class="form-label">Permanent House Number</label>
             <input type="text" id="pa_house_number" name="pa_house_number" class="form-control">

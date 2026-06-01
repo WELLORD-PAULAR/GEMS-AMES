@@ -190,6 +190,9 @@
         .badge-verified  { background: #d1fae5; color: #065f46; }
         .badge-pending   { background: #fef3c7; color: #78350f; }
         .badge-rejected  { background: #fee2e2; color: #7f1d1d; }
+
+        /* Hide copy address button in verify form */
+        #copyAddressBtn { display: none; }
         .no-results {
             text-align: center;
             padding: 40px 20px;
