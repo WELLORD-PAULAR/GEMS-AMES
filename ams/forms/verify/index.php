@@ -267,7 +267,7 @@ const ALL_ENROLLMENTS = <?php echo json_encode(array_values($allEnrollments), JS
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../enrollment.js"></script>
+
 <script src="verify.js"></script>
 </body>
 </html>
