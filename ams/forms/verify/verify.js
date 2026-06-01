@@ -288,9 +288,8 @@
 
     function populateForm(data) {
         if (data.enrollment) {
-            const lookupKeys = ['pi_mother_tongue_id','pi_religion_id','ac_indigenous_group_id'];
             Object.keys(data.enrollment).forEach(key => {
-                // Handle li_learning_modality as checkboxes
+                // li_learning_modality is a checkbox group, not a single element
                 if (key === 'li_learning_modality') {
                     const vals = (data.enrollment[key] || '').split(',').map(v => v.trim()).filter(Boolean);
                     document.querySelectorAll('input[name="li_learning_modality[]"]').forEach(cb => {
@@ -301,27 +300,7 @@
 
                 const element = document.getElementById(key);
                 if (element) {
-                    const value = data.enrollment[key] || '';
-                    element.value = value;
-                    if (lookupKeys.includes(key)) {
-                        try {
-                            const searchInput = document.getElementById(key + '_search');
-                            const optsJson = element.dataset.options;
-                            if (searchInput && optsJson) {
-                                const opts = JSON.parse(optsJson || '[]');
-                                const match = opts.find(o => (o.id || o.value || '') == value);
-                                if (match) {
-                                    searchInput.value = match.name || match.label || '';
-                                } else {
-                                    const byName = opts.find(o =>
-                                        (o.name||o.label||'').toLowerCase() === (value||'').toString().toLowerCase());
-                                    if (byName) searchInput.value = byName.name || byName.label || '';
-                                }
-                            }
-                        } catch (err) {
-                            console.warn('Lookup populate failed for', key, err);
-                        }
-                    }
+                    element.value = data.enrollment[key] || '';
                 }
             });
 

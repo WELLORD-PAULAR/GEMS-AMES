@@ -44,8 +44,15 @@ try {
         'rl_last_school_year_completed', 'rl_school_attended', 'rl_school_id', 'pi_psa_bcn',
         'pi_last_name', 'pi_first_name', 'pi_middle_name', 'pi_extension', 'pi_birth_date',
         'pi_sex', 'pi_place_of_birth', 'pi_learning_classification', 'ac_4ps_household_number',
+        'pi_mother_tongue_id', 'pi_religion_id', 'ac_indigenous_group_id',
+        'pi__attended_early_learning_program_name', 'li_learning_modality',
         'verification'
     ];
+
+    // li_learning_modality is posted as a checkbox array — collapse it before mapping
+    if (isset($_POST['li_learning_modality']) && is_array($_POST['li_learning_modality'])) {
+        $_POST['li_learning_modality'] = implode(',', $_POST['li_learning_modality']);
+    }
 
     $enrollmentData = [];
     foreach ($enrollmentFields as $field) {
@@ -107,9 +114,20 @@ try {
     }
 
     $medicalFields = [
-        'mf_a_medicine', 'mf_a_pollen', 'mf_a_food', 'mf_a_others', 'mf_o_others',
-        'mf_tm_type', 'mf_o_pertinent_information'
+        'mf_a_medicine', 'mf_a_pollen', 'mf_a_food', 'mf_a_others',
+        'mf_o_medical_conditions', 'mf_o_others',
+        'mf_sh_surgery_date', 'mf_sh_hospital_name', 'mf_sh_bodypart_affected',
+        'mf_tm_type', 'mf_tm_dosage_schedule',
+        'mf_mc_conditions', 'mf_mc_cancer_type', 'mf_mc_others',
+        'mf_exposure_c_v', 'mf_o_pertinent_information'
     ];
+
+    // These are posted as checkbox arrays — collapse to comma-separated strings
+    foreach (['mf_o_medical_conditions', 'mf_mc_conditions'] as $cbField) {
+        if (isset($_POST[$cbField]) && is_array($_POST[$cbField])) {
+            $_POST[$cbField] = implode(',', $_POST[$cbField]);
+        }
+    }
 
     $medicalData = [];
     foreach ($medicalFields as $field) {
@@ -146,9 +164,12 @@ try {
 
     $parentsFields = [
         'fi_last_name', 'fi_first_name', 'fi_middle_name', 'fi_contact_number', 'fi_occupation',
-        'fi_communication', 'mi_last_name', 'mi_first_name', 'mi_middle_name', 'mi_contact_number',
-        'mi_occupation', 'mi_communication', 'gi_last_name', 'gi_first_name', 'gi_middle_name',
-        'gi_contact_number', 'gi_occupation', 'gi_communication', 'ec_to_contact'
+        'fi_relationship_status', 'fi_communication',
+        'mi_last_name', 'mi_first_name', 'mi_middle_name', 'mi_contact_number',
+        'mi_occupation', 'mi_relationship_status', 'mi_communication',
+        'gi_last_name', 'gi_first_name', 'gi_middle_name',
+        'gi_contact_number', 'gi_occupation', 'gi_relationship_status', 'gi_communication',
+        'ec_to_contact'
     ];
 
     $parentsData = [];
@@ -185,7 +206,8 @@ try {
     }
 
     $specialNeedsFields = [
-        'snep_a1_diagnosis', 'snep_a1_sub_shpcd', 'snep_a1_sub_vi', 'snep_a2_manifestations'
+        'snep_a1_diagnosis', 'snep_a1_sub_shpcd', 'snep_a1_sub_vi',
+        'snep_a2_manifestations', 'snep_pwd_id'
     ];
     
     $arrayFields = ['snep_a1_diagnosis', 'snep_a2_manifestations'];
