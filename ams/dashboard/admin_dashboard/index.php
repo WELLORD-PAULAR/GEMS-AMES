@@ -219,6 +219,15 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                                 </div>
                                 New Enrollment
                             </a>
+                            <a href="masterlist/masterlist_selector.php" class="quick-link-card" title="Select columns and download CSV masterlist">
+                                <div class="quick-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 0 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                                        <path d="M12 8a.5.5 0 0 1-.5.5H5a.5.5 0 0 1 0-1h6.5a.5.5 0 0 1 .5.5zm0 2a.5.5 0 0 1-.5.5H5a.5.5 0 0 1 0-1h6.5a.5.5 0 0 1 .5.5z"/>
+                                    </svg>
+                                </div>
+                                Download Masterlist
+                            </a>
                             <a href="../../" class="quick-link-card">
                                 <div class="quick-link-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
