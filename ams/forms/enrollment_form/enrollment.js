@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     await autocompleteReady;
     forceUppercaseOnInputs();
     setupFormValidation();
+    setupAddressCopyButton();
 
     window.debugLookups = function() {
         console.log('\n🔍 CURRENT LOOKUP VALUES:');
@@ -463,4 +464,45 @@ async function fillDummyData() {
     selectByValue('snep_a1_sub_shpcd', 'NONE');
     selectByValue('snep_a1_sub_vi', 'NONE');
     selectByValue('snep_pwd_id', '0');
+}
+
+function setupAddressCopyButton() {
+    const copyBtn = document.getElementById('copyAddressBtn');
+    if (copyBtn) {
+        copyBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            copyCurrentToPermanentAddress();
+        });
+    }
+}
+
+function copyCurrentToPermanentAddress() {
+    const fieldMappings = [
+        { current: 'ca_house_number', permanent: 'pa_house_number' },
+        { current: 'ca_street_name', permanent: 'pa_street_name' },
+        { current: 'ca_barangay', permanent: 'pa_barangay' },
+        { current: 'ca_municipality', permanent: 'pa_municipality' },
+        { current: 'ca_provice', permanent: 'pa_province' },
+        { current: 'ca_country', permanent: 'pa_country' },
+        { current: 'ca_zipcode', permanent: 'pa_zip_code' },
+        { current: 'ca_address_status', permanent: 'pa_address_status' }
+    ];
+
+    let errorCount = 0;
+    fieldMappings.forEach(mapping => {
+        const currentField = document.getElementById(mapping.current);
+        const permanentField = document.getElementById(mapping.permanent);
+        
+        if (currentField && permanentField) {
+            permanentField.value = currentField.value;
+            // Trigger change event in case there are listeners
+            permanentField.dispatchEvent(new Event('change', { bubbles: true }));
+        } else {
+            errorCount++;
+        }
+    });
+
+    if (errorCount > 0) {
+        alert('Error: Failed to copy some address fields. Please check the form.');
+    }
 }
