@@ -69,6 +69,10 @@ if (empty($selectedColumns)) {
     exit('No columns selected. Please go back and select at least one column.');
 }
 
+function quoteIdentifier(string $identifier): string {
+    return '`' . str_replace('`', '``', $identifier) . '`';
+}
+
 $columnMap = [
     // enrollment2 table
     'fk_full_name_bd' => 'e.fk_full_name_bd',
@@ -125,7 +129,7 @@ $columnMap = [
 
 try {
     $selectCols = implode(', ', array_map(function($col) use ($columnMap) {
-        return $columnMap[$col] . ' AS ' . $col;
+        return $columnMap[$col] . ' AS ' . quoteIdentifier($col);
     }, $selectedColumns));
 
     $stmt = $pdo->prepare("
