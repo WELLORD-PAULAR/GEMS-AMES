@@ -12,6 +12,35 @@ if (!SessionManager::hasRole('ADMIN')) {
     exit;
 }
 
+// Enrollment statistics
+$stats = [
+    'total' => 0,
+    'pending' => 0,
+    'verified' => 0,
+    'rejected' => 0,
+];
+
+try {
+    $stmt = $pdo->query("SELECT verification, COUNT(*) AS count FROM enrollment2 GROUP BY verification");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $status = strtoupper(trim($row['verification'] ?? ''));
+        switch ($status) {
+            case 'VERIFIED':
+                $stats['verified'] += (int) $row['count'];
+                break;
+            case 'REJECTED':
+                $stats['rejected'] += (int) $row['count'];
+                break;
+            default:
+                $stats['pending'] += (int) $row['count'];
+                break;
+        }
+        $stats['total'] += (int) $row['count'];
+    }
+} catch (PDOException $e) {
+    // keep zeros on failure; optionally log $e->getMessage() in a real app
+}
+
 // Generate avatar initials from username
 $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
 ?>
@@ -101,7 +130,7 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <div class="stat-value">—</div>
+                    <div class="stat-value"><?php echo number_format($stats['total']); ?></div>
                     <div class="stat-label">Total Students</div>
                 </div>
             </div>
@@ -112,7 +141,7 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <div class="stat-value">—</div>
+                    <div class="stat-value"><?php echo number_format($stats['pending']); ?></div>
                     <div class="stat-label">Pending Enrollments</div>
                 </div>
             </div>
@@ -124,7 +153,7 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <div class="stat-value">—</div>
+                    <div class="stat-value"><?php echo number_format($stats['verified']); ?></div>
                     <div class="stat-label">Verified</div>
                 </div>
             </div>
@@ -135,7 +164,7 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                     </svg>
                 </div>
                 <div class="stat-info">
-                    <div class="stat-value">—</div>
+                    <div class="stat-value"><?php echo number_format($stats['rejected']); ?></div>
                     <div class="stat-label">Rejected</div>
                 </div>
             </div>
