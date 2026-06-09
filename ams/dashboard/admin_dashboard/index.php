@@ -257,6 +257,15 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                                 </div>
                                 Download Masterlist
                             </a>
+                            <a href="sectioning/assign_sections.php" class="quick-link-card" title="Assign students to sections">
+                                <div class="quick-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                                        <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+                                    </svg>
+                                </div>
+                                Assign Sections
+                            </a>
                             <a href="../../" class="quick-link-card">
                                 <div class="quick-link-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">

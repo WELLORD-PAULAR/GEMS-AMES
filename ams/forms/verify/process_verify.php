@@ -9,7 +9,7 @@ if (!SessionManager::isAuthenticated()) {
 }
 
 $user = SessionManager::getUser();
-if ($user['role'] !== 'TEACHER') {
+if ($user['role'] !== 'TEACHER' && $user['role'] !== 'ADMIN') {
     http_response_code(403);
     echo json_encode(['success' => false, 'message' => 'Access Denied']);
     exit;

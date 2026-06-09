@@ -7,9 +7,9 @@ if (!SessionManager::isAuthenticated()) {
 }
 
 $user = SessionManager::getUser();
-if ($user['role'] !== 'TEACHER') {
+if ($user['role'] !== 'TEACHER' && $user['role'] !== 'ADMIN') {
     http_response_code(403);
-    die('Access Denied: Only teachers can verify enrollments.');
+    die('Access Denied: Only teachers and admins can verify enrollments.');
 }
 
 require_once __DIR__ . '/../../config/config.php';
