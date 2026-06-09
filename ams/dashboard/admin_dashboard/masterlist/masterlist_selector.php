@@ -80,55 +80,97 @@ $columnGroups = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Masterlist Column Selector</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../../../style/auth.css">
     <link rel="stylesheet" href="masterlist_selector.css">
 </head>
-<body>
-    <div class="selector-container">
-        <div class="selector-header">
-            <h1>📋 Masterlist Column Selector</h1>
-            <p>Select which columns you want to include in your enrollment masterlist export.</p>
-        </div>
-
-        <form method="POST" action="generate_masterlist.php" id="selectorForm">
-            <div class="select-controls">
-                <button type="button" onclick="selectAllColumns()">Select All</button>
-                <button type="button" onclick="deselectAllColumns()">Deselect All</button>
+<body class="bg-light">
+    <div class="container py-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">📋 Masterlist Column Selector</h2>
             </div>
+            <div class="card-body">
+                <p class="text-muted">Select which columns you want to include in your enrollment masterlist export.</p>
 
-            <div class="column-groups">
-                <?php foreach ($columnGroups as $groupName => $columns): ?>
-                    <div class="column-group">
-                        <div class="column-group-title"><?php echo htmlspecialchars($groupName); ?></div>
-                        <?php foreach ($columns as $dbField => $displayName): ?>
-                            <div class="column-item">
-                                <input 
-                                    type="checkbox" 
-                                    name="columns[]" 
-                                    value="<?php echo htmlspecialchars($dbField); ?>" 
-                                    id="col_<?php echo htmlspecialchars($dbField); ?>"
-                                    checked
-                                >
-                                <label for="col_<?php echo htmlspecialchars($dbField); ?>">
-                                    <?php echo htmlspecialchars($displayName); ?>
-                                </label>
+                <form method="POST" action="generate_masterlist.php" id="selectorForm">
+                    <!-- Section Filter -->
+                    <div class="mb-4">
+                        <label for="classSection" class="form-label fw-semibold">Filter by Section:</label>
+                        <select name="section" id="classSection" class="form-select">
+                            <option value="">All Sections</option>
+                            <option value="K-Obedience">K-Obedience</option>
+                            <option value="K-Kindness">K-Kindness</option>
+                            <option value="K-Joy">K-Joy</option>
+                            <option value="1-Care">1-Care</option>
+                            <option value="1-Love">1-Love</option>
+                            <option value="1-Hope">1-Hope</option>
+                            <option value="2-Integrity">2-Integrity</option>
+                            <option value="2-Patience">2-Patience</option>
+                            <option value="2-Unity">2-Unity</option>
+                            <option value="3-Peace">3-Peace</option>
+                            <option value="3-Faith">3-Faith</option>
+                            <option value="4-Charity">4-Charity</option>
+                            <option value="4-Generosity">4-Generosity</option>
+                            <option value="5-Loyalty">5-Loyalty</option>
+                            <option value="5-Honesty">5-Honesty</option>
+                            <option value="6-Honesty">6-Honesty</option>
+                            <option value="6-Purity">6-Purity</option>
+                        </select>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <!-- Column Selection Controls -->
+                    <div class="mb-3 d-flex gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="selectAllColumns()">Select All</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllColumns()">Deselect All</button>
+                    </div>
+
+                    <!-- Column Groups Grid -->
+                    <div class="row g-3 mb-4">
+                        <?php foreach ($columnGroups as $groupName => $columns): ?>
+                            <div class="col-lg-6">
+                                <div class="border rounded p-3 bg-white h-100">
+                                    <h6 class="fw-semibold text-primary border-bottom pb-2 mb-3"><?php echo htmlspecialchars($groupName); ?></h6>
+                                    <?php foreach ($columns as $dbField => $displayName): ?>
+                                        <div class="form-check mb-2">
+                                            <input 
+                                                class="form-check-input" 
+                                                type="checkbox" 
+                                                name="columns[]" 
+                                                value="<?php echo htmlspecialchars($dbField); ?>" 
+                                                id="col_<?php echo htmlspecialchars($dbField); ?>"
+                                                checked
+                                            >
+                                            <label class="form-check-label" for="col_<?php echo htmlspecialchars($dbField); ?>">
+                                                <?php echo htmlspecialchars($displayName); ?>
+                                            </label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
                             </div>
                         <?php endforeach; ?>
                     </div>
-                <?php endforeach; ?>
-            </div>
 
-            <div class="column-count">
-                <span id="selectedCount">45</span> column(s) selected
-            </div>
+                    <!-- Selected Count Badge -->
+                    <div class="alert alert-info d-inline-block mb-4" role="alert">
+                        <strong><span id="selectedCount">45</span> column(s) selected</strong>
+                    </div>
 
-            <div class="action-buttons">
-                <button type="submit" class="btn btn-primary">📥 Download Masterlist</button>
-                <button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-end">
+                        <button type="button" class="btn btn-secondary" onclick="goBack()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-download"></i> 📥 Download Masterlist
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="masterlist_selector.js"></script>
 </body>
 </html>

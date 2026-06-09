@@ -69,6 +69,9 @@ if (empty($selectedColumns)) {
     exit('No columns selected. Please go back and select at least one column.');
 }
 
+$selectedSection = $_POST['section'] ?? '';
+$selectedSection = trim($selectedSection);
+
 function quoteIdentifier(string $identifier): string {
     return '`' . str_replace('`', '``', $identifier) . '`';
 }
@@ -132,6 +135,14 @@ try {
         return $columnMap[$col] . ' AS ' . quoteIdentifier($col);
     }, $selectedColumns));
 
+    $whereClause = '';
+    $params = [];
+    
+    if (!empty($selectedSection)) {
+        $whereClause = ' WHERE e.section = ?';
+        $params[] = $selectedSection;
+    }
+    
     $stmt = $pdo->prepare("
         SELECT {$selectCols}
         FROM enrollment2 e
@@ -139,14 +150,16 @@ try {
         LEFT JOIN enrollment_parent2 ep ON ep.fk_full_name_bd = e.fk_full_name_bd
         LEFT JOIN enrollment_medical2 em ON em.fk_full_name_bd = e.fk_full_name_bd
         LEFT JOIN enrollment_special_needs2 es ON es.fk_full_name_bd = e.fk_full_name_bd
+        {$whereClause}
         ORDER BY e.pi_last_name ASC, e.pi_first_name ASC
     ");
-    $stmt->execute();
+    $stmt->execute($params);
     $enrollments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (empty($enrollments)) {
+        $sectionInfo = !empty($selectedSection) ? " for section '{$selectedSection}'" : '';
         http_response_code(404);
-        exit('No enrollment records found.');
+        exit('No enrollment records found' . $sectionInfo . '.');
     }
 
     $filename = 'enrollment_masterlist_' . date('Y-m-d_H-i-s') . '.csv';
