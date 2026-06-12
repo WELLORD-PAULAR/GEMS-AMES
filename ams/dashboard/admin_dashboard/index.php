@@ -266,6 +266,40 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
                                 </div>
                                 Assign Sections
                             </a>
+                            <span class="quick-link-divider"></span>
+                            <a href="teacher_management/" class="quick-link-card" title="Manage teacher profiles">
+                                <div class="quick-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M8 16a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-16a4 4 0 1 1 0 8 4 4 0 0 1 0-8zM.5 1a.5.5 0 0 0 0 1h1.110a.5.5 0 0 0 .393-.192l.57-.76h5.693l.57.76a.5.5 0 0 0 .393.192h1.11a.5.5 0 0 0 0-1H14.5a.5.5 0 0 0-.491.408l-.524 3.143a3 3 0 0 1-2.855 2.43h-.015a3 3 0 0 1-2.847-2.431L1.991.408A.5.5 0 0 0 1.5 0H.5z"/>
+                                    </svg>
+                                </div>
+                                Teacher Management
+                            </a>
+                            <a href="subject_management/" class="quick-link-card" title="Manage academic subjects">
+                                <div class="quick-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z"/>
+                                    </svg>
+                                </div>
+                                Subject Management
+                            </a>
+                            <a href="section_management/" class="quick-link-card" title="Manage classes and sections">
+                                <div class="quick-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4V2h4v2zm0 5h-5V7h5v2zm0 5h-5v-2h5v2zM4 4a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm0 5a1 1 0 1 0-2 0 1 1 0 0 0 2 0zm0 5a1 1 0 1 0-2 0 1 1 0 0 0 2 0z"/>
+                                    </svg>
+                                </div>
+                                Section Management
+                            </a>
+                            <a href="teacher_assignments/" class="quick-link-card" title="Assign teachers to subjects and sections">
+                                <div class="quick-link-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+                                    </svg>
+                                </div>
+                                Teacher Assignments
+                            </a>
+                            <span class="quick-link-divider"></span>
                             <a href="../../" class="quick-link-card">
                                 <div class="quick-link-icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">

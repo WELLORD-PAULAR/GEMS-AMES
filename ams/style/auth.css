@@ -632,6 +632,13 @@ a:hover { opacity: 0.75; }
     border-color: var(--primary);
 }
 
+.quick-link-divider {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+}
+
 /* ── System Notice ───────────────────────────────────────────── */
 .system-notice {
     display: flex;
