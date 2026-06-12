@@ -54,9 +54,9 @@ if (isset($_GET['edit'])) {
 }
 
 $termLabels = [
-    1 => '1st Term',
-    2 => '2nd Term',
-    3 => 'Summer'
+    1 => '1st Term (June - August)',
+    2 => '2nd Term (September - November)',
+    3 => '3rd Term (December - April)'
 ];
 
 ?>
@@ -123,9 +123,9 @@ $termLabels = [
                                 <label for="offered_term" class="form-label">Offered Term</label>
                                 <select id="offered_term" name="offered_term" class="form-select">
                                     <option value="">-- Year-round (All Terms) --</option>
-                                    <option value="1" <?php echo $editSubject && $editSubject['offered_term'] == 1 ? 'selected' : ''; ?>>1st Term</option>
-                                    <option value="2" <?php echo $editSubject && $editSubject['offered_term'] == 2 ? 'selected' : ''; ?>>2nd Term</option>
-                                    <option value="3" <?php echo $editSubject && $editSubject['offered_term'] == 3 ? 'selected' : ''; ?>>Summer</option>
+                                    <option value="1" <?php echo $editSubject && $editSubject['offered_term'] == 1 ? 'selected' : ''; ?>>1st Term (June - August)</option>
+                                    <option value="2" <?php echo $editSubject && $editSubject['offered_term'] == 2 ? 'selected' : ''; ?>>2nd Term (September - November)</option>
+                                    <option value="3" <?php echo $editSubject && $editSubject['offered_term'] == 3 ? 'selected' : ''; ?>>3rd Term (December - April)</option>
                                 </select>
                             </div>
 

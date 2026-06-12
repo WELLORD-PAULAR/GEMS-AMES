@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $result = $handler->createSection(
             trim($_POST['section_name']),
             trim($_POST['grade_level']),
-            (int)$_POST['school_year']
+            trim($_POST['school_year'])
         );
         $messageType = $result['success'] ? 'success' : 'danger';
         $message = $result['message'];
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         $result = $handler->updateSection((int)$_POST['section_id'], [
             'section_name' => trim($_POST['section_name']),
             'grade_level' => trim($_POST['grade_level']),
-            'school_year' => (int)$_POST['school_year']
+            'school_year' => trim($_POST['school_year'])
         ]);
         $messageType = $result['success'] ? 'success' : 'danger';
         $message = $result['message'];
@@ -55,6 +55,14 @@ if (isset($_GET['edit'])) {
 
 $grades = ['KINDERGARTEN', 'GRADE 1', 'GRADE 2', 'GRADE 3', 'GRADE 4', 'GRADE 5', 'GRADE 6'];
 $currentYear = (int)date('Y');
+$schoolYearStart = $currentYear;
+$schoolYearEnd = $currentYear + 1;
+
+// School year options
+$schoolYearOptions = [];
+for ($year = $currentYear - 1; $year <= $currentYear + 2; $year++) {
+    $schoolYearOptions[$year . '-' . ($year + 1)] = 'SY ' . $year . '-' . ($year + 1);
+}
 
 ?>
 <!DOCTYPE html>
@@ -125,12 +133,12 @@ $currentYear = (int)date('Y');
                             <div class="mb-3">
                                 <label for="school_year" class="form-label">School Year <span class="text-danger">*</span></label>
                                 <select id="school_year" name="school_year" class="form-select" required>
-                                    <?php for ($year = $currentYear - 1; $year <= $currentYear + 2; $year++): ?>
-                                        <option value="<?php echo $year; ?>" 
-                                            <?php echo $editSection && $editSection['school_year'] == $year ? 'selected' : ($year == $currentYear ? 'selected' : ''); ?>>
-                                            <?php echo $year; ?>
+                                    <?php foreach ($schoolYearOptions as $value => $label): ?>
+                                        <option value="<?php echo $value; ?>" 
+                                            <?php echo $editSection && $editSection['school_year'] == $value ? 'selected' : ($value == ($currentYear . '-' . ($currentYear + 1)) ? 'selected' : ''); ?>>
+                                            <?php echo $label; ?>
                                         </option>
-                                    <?php endfor; ?>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 

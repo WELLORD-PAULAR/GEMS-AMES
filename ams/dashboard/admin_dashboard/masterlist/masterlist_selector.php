@@ -93,6 +93,12 @@ $columnGroups = [
             <div class="card-body">
                 <p class="text-muted">Select which columns you want to include in your enrollment masterlist export.</p>
 
+                <!-- Calendar Info Banner -->
+                <div style="background: #f0f4ff; border-left: 4px solid #667eea; padding: 12px; margin-bottom: 20px; border-radius: 4px; font-size: 13px;">
+                    <strong>📅 DepEd Three-Term Calendar SY 2026-2027</strong><br>
+                    <small>Term 1: June-Aug | Term 2: Sept-Nov | Term 3: Dec-Apr</small>
+                </div>
+
                 <form method="POST" action="generate_masterlist.php" id="selectorForm">
                     <!-- Section Filter -->
                     <div class="mb-4">

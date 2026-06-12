@@ -91,6 +91,10 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
         <div class="admin-page-header">
             <h2>Assign Student Sections</h2>
             <p>Select students and assign them to their appropriate sections by grade level.</p>
+            <div style="background: #e7f3ff; border-left: 4px solid #2196F3; padding: 12px; margin-top: 15px; border-radius: 4px; font-size: 13px;">
+                <strong>📅 DepEd Three-Term Calendar SY 2026-2027</strong><br>
+                1st Term: June-Aug | 2nd Term: Sept-Nov | 3rd Term: Dec-Apr
+            </div>
         </div>
 
         <div class="filter-section">

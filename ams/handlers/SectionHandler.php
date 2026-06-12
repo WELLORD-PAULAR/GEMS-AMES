@@ -16,7 +16,7 @@ class SectionHandler
         $this->db = $db;
     }
 
-    public function createSection(string $name, string $gradeLevel, int $schoolYear): array
+    public function createSection(string $name, string $gradeLevel, string $schoolYear): array
     {
         try {
             $this->db->beginTransaction();
@@ -24,6 +24,11 @@ class SectionHandler
             $validGrades = ['KINDERGARTEN', 'GRADE 1', 'GRADE 2', 'GRADE 3', 'GRADE 4', 'GRADE 5', 'GRADE 6'];
             if (!in_array($gradeLevel, $validGrades)) {
                 throw new \Exception('Invalid grade level');
+            }
+
+            // Validate school year format (YYYY-YYYY)
+            if (!preg_match('/^\d{4}-\d{4}$/', $schoolYear)) {
+                throw new \Exception('Invalid school year format. Use YYYY-YYYY');
             }
 
             $section = new Section($this->db);

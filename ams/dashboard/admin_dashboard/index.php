@@ -120,7 +120,7 @@ $initials = strtoupper(substr($user['username'] ?? 'A', 0, 1));
             <h2>Welcome back, <?php echo htmlspecialchars($user['username']); ?> 👋</h2>
             <p>Here's an overview of the GEMS enrollment management system.</p>
         </div>
-
+        
         <!-- Stat Cards -->
         <div class="stats-grid">
             <div class="stat-card">

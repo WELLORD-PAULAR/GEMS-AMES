@@ -16,7 +16,7 @@ class TeacherAssignmentHandler
         $this->db = $db;
     }
 
-    public function assignTeacher(int $teacherId, int $subjectId, int $sectionId, int $schoolYear, int $term): array
+    public function assignTeacher(int $teacherId, int $subjectId, int $sectionId, string $schoolYear, int $term): array
     {
         try {
             $this->db->beginTransaction();
@@ -24,6 +24,11 @@ class TeacherAssignmentHandler
             // Validate term
             if ($term < 1 || $term > 3) {
                 throw new \Exception('Invalid term (must be 1-3)');
+            }
+
+            // Validate school year format (YYYY-YYYY)
+            if (!preg_match('/^\d{4}-\d{4}$/', $schoolYear)) {
+                throw new \Exception('Invalid school year format. Use YYYY-YYYY');
             }
 
             // Check if teacher exists

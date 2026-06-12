@@ -12,6 +12,19 @@ define('API_DEBUG', true);
 define('JWT_SECRET', 'your-super-secret-key-change-in-production');
 define('JWT_EXPIRY', 86400);
 
+// DepEd Three-Term School Calendar (SY 2026-2027)
+define('SCHOOL_YEAR_CURRENT', '2026-2027');
+define('TERM_1_LABEL', '1st Term (June - August)');
+define('TERM_2_LABEL', '2nd Term (September - November)');
+define('TERM_3_LABEL', '3rd Term (December - April)');
+define('TERM_SUMMER_LABEL', 'Summer');
+
+$termLabels = [
+    1 => TERM_1_LABEL,
+    2 => TERM_2_LABEL,
+    3 => TERM_3_LABEL
+];
+
 $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET . ";port=" . DB_PORT;
 
 $options = [

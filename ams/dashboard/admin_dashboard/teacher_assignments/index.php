@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             (int)$_POST['teacher_id'],
             (int)$_POST['subject_id'],
             (int)$_POST['section_id'],
-            (int)$_POST['school_year'],
+            trim($_POST['school_year']),
             (int)$_POST['term']
         );
         $messageType = $result['success'] ? 'success' : 'danger';
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             'teacher_id' => (int)$_POST['teacher_id'],
             'subject_id' => (int)$_POST['subject_id'],
             'section_id' => (int)$_POST['section_id'],
-            'school_year' => (int)$_POST['school_year'],
+            'school_year' => trim($_POST['school_year']),
             'term' => (int)$_POST['term']
         ]);
         $messageType = $result['success'] ? 'success' : 'danger';
@@ -69,8 +69,16 @@ if (isset($_GET['edit'])) {
     $editAssignment = $assignmentHandler->getAssignmentById((int)$_GET['edit']);
 }
 
-$termLabels = [1 => '1st Term', 2 => '2nd Term', 3 => 'Summer'];
+$termLabels = [
+    1 => '1st Term (June - August)',
+    2 => '2nd Term (September - November)',
+    3 => '3rd Term (December - April)'
+];
+
 $currentYear = (int)date('Y');
+$schoolYearStart = $currentYear;
+$schoolYearEnd = $currentYear + 1;
+$currentSchoolYear = "$schoolYearStart-$schoolYearEnd";
 
 ?>
 <!DOCTYPE html>
@@ -161,9 +169,10 @@ $currentYear = (int)date('Y');
                                 <label for="school_year" class="form-label">School Year <span class="text-danger">*</span></label>
                                 <select id="school_year" name="school_year" class="form-select" required>
                                     <?php for ($year = $currentYear - 1; $year <= $currentYear + 2; $year++): ?>
-                                        <option value="<?php echo $year; ?>"
-                                            <?php echo $editAssignment && $editAssignment['school_year'] == $year ? 'selected' : ($year == $currentYear ? 'selected' : ''); ?>>
-                                            <?php echo $year; ?>
+                                        <?php $yearLabel = $year . '-' . ($year + 1); ?>
+                                        <option value="<?php echo $yearLabel; ?>"
+                                            <?php echo $editAssignment && $editAssignment['school_year'] == $yearLabel ? 'selected' : ($year == $currentYear ? 'selected' : ''); ?>>
+                                            SY <?php echo $yearLabel; ?>
                                         </option>
                                     <?php endfor; ?>
                                 </select>
@@ -173,9 +182,9 @@ $currentYear = (int)date('Y');
                                 <label for="term" class="form-label">Term <span class="text-danger">*</span></label>
                                 <select id="term" name="term" class="form-select" required>
                                     <option value="">-- Select Term --</option>
-                                    <option value="1" <?php echo $editAssignment && $editAssignment['term'] == 1 ? 'selected' : ''; ?>>1st Term</option>
-                                    <option value="2" <?php echo $editAssignment && $editAssignment['term'] == 2 ? 'selected' : ''; ?>>2nd Term</option>
-                                    <option value="3" <?php echo $editAssignment && $editAssignment['term'] == 3 ? 'selected' : ''; ?>>Summer</option>
+                                    <option value="1" <?php echo $editAssignment && $editAssignment['term'] == 1 ? 'selected' : ''; ?>>1st Term (June - August)</option>
+                                    <option value="2" <?php echo $editAssignment && $editAssignment['term'] == 2 ? 'selected' : ''; ?>>2nd Term (September - November)</option>
+                                    <option value="3" <?php echo $editAssignment && $editAssignment['term'] == 3 ? 'selected' : ''; ?>>3rd Term (December - April)</option>
                                 </select>
                             </div>
 
