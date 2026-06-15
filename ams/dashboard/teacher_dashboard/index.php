@@ -80,22 +80,6 @@ unset($group);
     </header>
 
     <main class="container mb-5">
-        <!-- DepEd Three-Term Calendar Info -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 18px; border-radius: 8px; margin-bottom: 20px;">
-            <h5 style="margin-bottom: 10px; font-weight: 600; font-size: 14px;">📅 Current Term: SY 2026-2027</h5>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; font-size: 13px;">
-                <div style="opacity: 0.85;">
-                    <strong>1st Term:</strong> June - August
-                </div>
-                <div style="opacity: 0.85;">
-                    <strong>2nd Term:</strong> Sept - Nov
-                </div>
-                <div style="opacity: 0.85;">
-                    <strong>3rd Term:</strong> Dec - Apr
-                </div>
-            </div>
-        </div>
-
         <div class="row g-4">
             <div class="col-12 col-lg-4">
                 <div class="card shadow-sm">

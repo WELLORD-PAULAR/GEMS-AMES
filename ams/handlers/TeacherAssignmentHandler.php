@@ -167,12 +167,7 @@ class TeacherAssignmentHandler
         try {
             $this->db->beginTransaction();
 
-            $this->db->query("DELETE FROM teacher_assignments WHERE assignment_id = ?", [$assignmentId]);
-
-            if ($this->db->rowCount() === 0) {
-                throw new \Exception('Assignment not found');
-            }
-
+                $this->db->query("DELETE FROM teacher_class_roster WHERE assignment_id = ?", [$assignmentId]);
             $this->db->commit();
 
             return [
@@ -193,12 +188,7 @@ class TeacherAssignmentHandler
         try {
             $this->db->beginTransaction();
 
-            $this->db->query("DELETE FROM teacher_assignments WHERE teacher_id = ?", [$teacherId]);
-
-            $deletedCount = $this->db->rowCount();
-
-            $this->db->commit();
-
+                $this->db->query("DELETE FROM teacher_class_roster WHERE teacher_id = ?", [$teacherId]);
             return [
                 'success' => true,
                 'message' => "Deleted $deletedCount assignments",
@@ -218,12 +208,7 @@ class TeacherAssignmentHandler
         try {
             $this->db->beginTransaction();
 
-            $this->db->query("DELETE FROM teacher_assignments WHERE section_id = ?", [$sectionId]);
-
-            $deletedCount = $this->db->rowCount();
-
-            $this->db->commit();
-
+                $this->db->query("DELETE FROM teacher_class_roster WHERE section_id = ?", [$sectionId]);
             return [
                 'success' => true,
                 'message' => "Deleted $deletedCount assignments",

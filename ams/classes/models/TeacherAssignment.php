@@ -6,7 +6,7 @@ require_once __DIR__ . '/../Model.php';
 
 class TeacherAssignment extends Model
 {
-    protected string $table = 'teacher_assignments';
+    protected string $table = 'teacher_class_roster';
 
     public function getAssignmentsByTeacher(int $teacherId): array
     {
