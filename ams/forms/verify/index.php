@@ -44,7 +44,7 @@ usort($gradeLevels, function($a, $b) {
 });
 rsort($schoolYears);
 
-$counts = ['PENDING' => 0, 'VERIFIED' => 0, 'PROCESSING' => 0, 'REJECTED' => 0, 'WITHDRAWN' => 0, 'TRANSFERRED_IN' => 0, 'TRANSFERRED_OUT' => 0, 'DROPPED' => 0];
+$counts = ['PENDING' => 0, 'PROCESSING' => 0, 'VERIFIED' => 0, 'REJECTED' => 0, 'WITHDRAWN' => 0, 'TRANSFERRED_IN' => 0, 'TRANSFERRED_OUT' => 0, 'DROPPED' => 0];
 foreach ($allEnrollments as $e) {
     $s = strtoupper(trim($e['verification'] ?? ''));
     if (array_key_exists($s, $counts)) {
@@ -121,6 +121,10 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 Rejected
                 <span class="badge bg-danger"><?php echo $counts['REJECTED']; ?></span>
             </button>
+            <button class="status-tab" data-status="PROCESSING">
+                Processing
+                <span class="badge bg-info text-dark"><?php echo $counts['PROCESSING']; ?></span>
+            </button>
             <button class="status-tab" data-status="WITHDRAWN">
                 Withdrawn
                 <span class="badge bg-secondary"><?php echo $counts['WITHDRAWN']; ?></span>
@@ -132,10 +136,6 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
             <button class="status-tab" data-status="TRANSFERRED_OUT">
                 Transferred Out
                 <span class="badge bg-secondary"><?php echo $counts['TRANSFERRED_OUT']; ?></span>
-            </button>
-            <button class="status-tab" data-status="PROCESSING">
-                Processing
-                <span class="badge bg-info text-dark"><?php echo $counts['PROCESSING'] ?? 0; ?></span>
             </button>
             <button class="status-tab" data-status="DROPPED">
                 Dropped

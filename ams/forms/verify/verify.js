@@ -168,14 +168,14 @@
     }
 
     const STATUS_META = {
-        'VERIFIED':        { cls: 'badge-verified',       label: 'Verified' },
+        'PENDING':         { cls: 'badge-pending',        label: 'Pending' },
         'PROCESSING':      { cls: 'badge-processing',     label: 'Processing' },
+        'VERIFIED':        { cls: 'badge-verified',       label: 'Verified' },
         'REJECTED':        { cls: 'badge-rejected',       label: 'Rejected' },
         'WITHDRAWN':       { cls: 'badge-withdrawn',      label: 'Withdrawn' },
         'TRANSFERRED_IN':  { cls: 'badge-transferred-in', label: 'Transferred In' },
         'TRANSFERRED_OUT': { cls: 'badge-transferred-out',label: 'Transferred Out' },
         'DROPPED':         { cls: 'badge-dropped',        label: 'Dropped' },
-        'PENDING':         { cls: 'badge-pending',        label: 'Pending' },
     };
 
     function normalizedStatus(s) {
@@ -515,8 +515,8 @@
         const classMap = {
             '':               'active-all',
             'PENDING':        'active-pending',
-            'VERIFIED':       'active-verified',
             'PROCESSING':     'active-processing',
+            'VERIFIED':       'active-verified',
             'REJECTED':       'active-rejected',
             'WITHDRAWN':      'active-withdrawn',
             'TRANSFERRED_IN': 'active-transferred-in',
