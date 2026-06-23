@@ -210,3 +210,16 @@
 
         /* keep enrollment details full-width under table */
         #enrollmentDetailsWrapper { margin-top: 8px; }
+        /* ── Extended status badges ──────────────────────────── */
+        .badge-processing      { background: #cff4fc; color: #055160; }
+        .badge-withdrawn       { background: #e2e3e5; color: #41464b; }
+        .badge-transferred-in  { background: #d1ecf1; color: #0c5460; }
+        .badge-transferred-out { background: #fde8d8; color: #7c3300; }
+        .badge-dropped         { background: #f8d7da; color: #58151c; }
+
+        /* ── Extended active tab states ──────────────────────── */
+        .status-tab.active-processing      { border-color: #0dcaf0; background: #cff4fc; color: #055160; }
+        .status-tab.active-withdrawn       { border-color: #6c757d; background: #e2e3e5; color: #41464b; }
+        .status-tab.active-transferred-in  { border-color: #0d9488; background: #ccfbf1; color: #134e4a; }
+        .status-tab.active-transferred-out { border-color: #ea580c; background: #ffedd5; color: #7c2d12; }
+        .status-tab.active-dropped         { border-color: #dc3545; background: #fdecea; color: #7b1a1a; }

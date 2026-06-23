@@ -167,26 +167,24 @@
         return m ? parseInt(m[0], 10) : 999;
     }
 
-    function statusClass(s) {
-        const v = (s || '').toUpperCase().trim();
-        if (v === 'VERIFIED') return 'badge-verified';
-        if (v === 'REJECTED') return 'badge-rejected';
-        return 'badge-pending';
-    }
-
-    function statusLabel(s) {
-        const v = (s || '').toUpperCase().trim();
-        if (v === 'VERIFIED') return 'Verified';
-        if (v === 'REJECTED') return 'Rejected';
-        return 'Pending';
-    }
+    const STATUS_META = {
+        'VERIFIED':        { cls: 'badge-verified',       label: 'Verified' },
+        'PROCESSING':      { cls: 'badge-processing',     label: 'Processing' },
+        'REJECTED':        { cls: 'badge-rejected',       label: 'Rejected' },
+        'WITHDRAWN':       { cls: 'badge-withdrawn',      label: 'Withdrawn' },
+        'TRANSFERRED_IN':  { cls: 'badge-transferred-in', label: 'Transferred In' },
+        'TRANSFERRED_OUT': { cls: 'badge-transferred-out',label: 'Transferred Out' },
+        'DROPPED':         { cls: 'badge-dropped',        label: 'Dropped' },
+        'PENDING':         { cls: 'badge-pending',        label: 'Pending' },
+    };
 
     function normalizedStatus(s) {
         const v = (s || '').toUpperCase().trim();
-        if (v === 'VERIFIED') return 'VERIFIED';
-        if (v === 'REJECTED') return 'REJECTED';
-        return 'PENDING';
+        return STATUS_META[v] ? v : 'PENDING';
     }
+
+    function statusClass(s)  { return (STATUS_META[normalizedStatus(s)] || STATUS_META['PENDING']).cls; }
+    function statusLabel(s)  { return (STATUS_META[normalizedStatus(s)] || STATUS_META['PENDING']).label; }
 
     function fullName(e) {
         return [e.pi_first_name, e.pi_middle_name, e.pi_last_name]
@@ -514,11 +512,21 @@
     });
 
     function updateStatusTabs() {
-        const classMap = { '':'active-all','PENDING':'active-pending','VERIFIED':'active-verified','REJECTED':'active-rejected' };
+        const classMap = {
+            '':               'active-all',
+            'PENDING':        'active-pending',
+            'VERIFIED':       'active-verified',
+            'PROCESSING':     'active-processing',
+            'REJECTED':       'active-rejected',
+            'WITHDRAWN':      'active-withdrawn',
+            'TRANSFERRED_IN': 'active-transferred-in',
+            'TRANSFERRED_OUT':'active-transferred-out',
+            'DROPPED':        'active-dropped',
+        };
         document.querySelectorAll('.status-tab').forEach(tab => {
             tab.className = 'status-tab';
             if (tab.dataset.status === activeStatus)
-                tab.classList.add(classMap[activeStatus] || 'active-all');
+                tab.classList.add(classMap[activeStatus] ?? 'active-all');
         });
     }
 
