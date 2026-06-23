@@ -25,7 +25,6 @@ use AMS\Database;
 
 $db = new Database($pdo);
 
-// ── Load all enrollments with counts ─────────────────────────────────────────
 $db->query("
     SELECT fk_full_name_bd, pi_first_name, pi_last_name, pi_middle_name,
            pi_sex, pi_birth_date, ed_grade_level, ed_school_year,
@@ -35,11 +34,9 @@ $db->query("
 ");
 $allEnrollments = $db->fetchAll();
 
-// ── Distinct grade levels and school years for filter dropdowns ───────────────
 $gradeLevels  = array_unique(array_column($allEnrollments, 'ed_grade_level'));
 $schoolYears  = array_unique(array_column($allEnrollments, 'ed_school_year'));
 
-// Sort grades numerically (K first, then 1-12)
 usort($gradeLevels, function($a, $b) {
     $aNum = preg_match('/\d+/', $a, $m) ? (int)$m[0] : 0;
     $bNum = preg_match('/\d+/', $b, $m) ? (int)$m[0] : 0;
@@ -47,8 +44,7 @@ usort($gradeLevels, function($a, $b) {
 });
 rsort($schoolYears);
 
-// ── Counts for badges ──────────────────────────────────────────────────────────
-$counts = ['PENDING' => 0, 'VERIFIED' => 0, 'REJECTED' => 0];
+$counts = ['PENDING' => 0, 'VERIFIED' => 0, 'REJECTED' => 0, 'PROCESSING' => 0, 'WITHDRAWN' => 0, 'TRANSFERRED_IN' => 0, 'TRANSFERRED_OUT' => 0, 'DROPPED' => 0];
 foreach ($allEnrollments as $e) {
     $s = strtoupper(trim($e['verification'] ?? ''));
     if ($s === 'VERIFIED')      $counts['VERIFIED']++;
@@ -56,7 +52,7 @@ foreach ($allEnrollments as $e) {
     else                        $counts['PENDING']++;
 }
 
-$verificationStatuses = ['VERIFIED', 'PROCESSING', 'REJECTED'];
+$verificationStatuses = ['VERIFIED', 'PROCESSING', 'REJECTED', 'WITHDRAWN', 'TRANSFERRED_IN', 'TRANSFERRED_OUT', 'DROPPED'];
 
 $success = isset($_GET['success']) && $_GET['success'] == '1';
 $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
@@ -123,6 +119,25 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 Rejected
                 <span class="badge bg-danger"><?php echo $counts['REJECTED']; ?></span>
             </button>
+            <button class="status-tab" data-status="PROCESSING">
+                Processing
+                <span class="badge bg-info text-dark"><?php echo $counts['PROCESSING']; ?></span>
+            </button>
+            <button class="status-tab" data-status="WITHDRAWN">
+                Withdrawn
+                <span class="badge bg-secondary"><?php echo $counts['WITHDRAWN']; ?></span>
+            </button>
+            <button class="status-tab" data-status="TRANSFERRED_IN">
+                Transferred In
+                <span class="badge bg-secondary"><?php echo $counts['TRANSFERRED_IN']; ?></span>
+            </button>
+            <button class="status-tab" data-status="TRANSFERRED_OUT">
+                Transferred Out
+                <span class="badge bg-secondary"><?php echo $counts['TRANSFERRED_OUT']; ?></span>
+            </button>
+            <button class="status-tab" data-status="DROPPED">
+                Dropped
+                <span class="badge bg-secondary"><?php echo $counts['DROPPED']; ?></span>
         </div>
 
         <!-- Search + dropdowns -->
