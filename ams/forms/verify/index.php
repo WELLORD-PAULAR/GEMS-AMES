@@ -47,14 +47,27 @@ rsort($schoolYears);
 $counts = ['PENDING' => 0, 'PROCESSING' => 0, 'VERIFIED' => 0, 'REJECTED' => 0, 'WITHDRAWN' => 0, 'TRANSFERRED_IN' => 0, 'TRANSFERRED_OUT' => 0, 'DROPPED' => 0];
 foreach ($allEnrollments as $e) {
     $s = strtoupper(trim($e['verification'] ?? ''));
-    if (array_key_exists($s, $counts)) {
-        $counts[$s]++;
+    if ($s === 'VERIFIED') {
+        $counts['VERIFIED']++;
+    } elseif ($s === 'REJECTED') {
+        $counts['REJECTED']++;
+    } elseif ($s === 'PROCESSING') {
+        $counts['PROCESSING']++;
+    } elseif ($s === 'WITHDRAWN') {
+        $counts['WITHDRAWN']++;
+    } elseif ($s === 'TRANSFERRED_IN') {
+        $counts['TRANSFERRED_IN']++;
+    } elseif ($s === 'TRANSFERRED_OUT') {
+        $counts['TRANSFERRED_OUT']++;
+    } elseif ($s === 'DROPPED') {
+        $counts['DROPPED']++;
     } else {
+        // Empty, NULL, and unknown statuses default to PENDING
         $counts['PENDING']++;
     }
 }
 
-$verificationStatuses = ['VERIFIED', 'PROCESSING', 'REJECTED', 'WITHDRAWN', 'TRANSFERRED_IN', 'TRANSFERRED_OUT', 'DROPPED'];
+$verificationStatuses = ['PROCESSING', 'VERIFIED', 'REJECTED', 'WITHDRAWN', 'TRANSFERRED_IN', 'TRANSFERRED_OUT', 'DROPPED'];
 
 $success = isset($_GET['success']) && $_GET['success'] == '1';
 $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
@@ -113,6 +126,10 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 Pending
                 <span class="badge bg-warning text-dark"><?php echo $counts['PENDING']; ?></span>
             </button>
+            <button class="status-tab" data-status="PROCESSING">
+                Processing
+                <span class="badge bg-info"><?php echo $counts['PROCESSING']; ?></span>
+            </button>
             <button class="status-tab" data-status="VERIFIED">
                 Verified
                 <span class="badge bg-success"><?php echo $counts['VERIFIED']; ?></span>
@@ -120,10 +137,6 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
             <button class="status-tab" data-status="REJECTED">
                 Rejected
                 <span class="badge bg-danger"><?php echo $counts['REJECTED']; ?></span>
-            </button>
-            <button class="status-tab" data-status="PROCESSING">
-                Processing
-                <span class="badge bg-info text-dark"><?php echo $counts['PROCESSING']; ?></span>
             </button>
             <button class="status-tab" data-status="WITHDRAWN">
                 Withdrawn
@@ -263,6 +276,7 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
                 <div class="mb-4">
                     <label for="verificationStatus" class="form-label">Verification Status</label>
                     <select id="verificationStatus" name="verification" class="form-select">
+                        <option value="" disabled selected>— Select status —</option>
                         <?php foreach ($verificationStatuses as $status): ?>
                             <option value="<?php echo htmlspecialchars($status); ?>"><?php echo htmlspecialchars($status); ?></option>
                         <?php endforeach; ?>
@@ -281,7 +295,7 @@ $error   = isset($_GET['error']) ? urldecode($_GET['error']) : null;
 </div>
 
 <script>
-const ALL_ENROLLMENTS = <?php echo json_encode(array_values($allEnrollments), JSON_HEX_TAG); ?>;
+window.ALL_ENROLLMENTS = <?php echo json_encode(array_values($allEnrollments), JSON_HEX_TAG); ?>;
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

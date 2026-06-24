@@ -32,12 +32,10 @@ try {
                 $stats['rejected'] += (int) $row['count'];
                 break;
             case 'PENDING':
+            case 'PROCESSING':
             case '':
                 $stats['pending'] += (int) $row['count'];
                 break;
-            // PROCESSING, WITHDRAWN, TRANSFERRED_IN, TRANSFERRED_OUT, DROPPED
-            // are active enrolments but not yet in a terminal state — count
-            // them in total only, not as pending
             default:
                 break;
         }

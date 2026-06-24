@@ -54,6 +54,14 @@ try {
         $_POST['li_learning_modality'] = implode(',', $_POST['li_learning_modality']);
     }
 
+    // Validate verification against allowed enum values; reject any value not in this list
+    $allowedVerificationStatuses = ['VERIFIED', 'PROCESSING', 'REJECTED', 'WITHDRAWN', 'TRANSFERRED_IN', 'TRANSFERRED_OUT', 'DROPPED'];
+    if (isset($_POST['verification']) && $_POST['verification'] !== '') {
+        if (!in_array($_POST['verification'], $allowedVerificationStatuses, true)) {
+            unset($_POST['verification']); // silently ignore invalid values
+        }
+    }
+
     $enrollmentData = [];
     foreach ($enrollmentFields as $field) {
         if (isset($_POST[$field]) && $_POST[$field] !== '') {

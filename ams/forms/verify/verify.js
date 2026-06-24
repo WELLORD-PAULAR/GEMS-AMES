@@ -1,8 +1,10 @@
 (function () {
     'use strict';
 
-    // ── Lookup widget state ──────────────────────────────────────
-    // Keyed by field id, value is the loaded options array (or null if not yet loaded)
+    // ────────────────────────────────────────────────────────────
+    // LOOKUP WIDGETS (Mother Tongue, Religion, Indigenous Group)
+    // ────────────────────────────────────────────────────────────
+
     const _lookupOptions = {
         pi_mother_tongue_id:  null,
         pi_religion_id:       null,
@@ -21,125 +23,142 @@
         ac_indigenous_group_id: 'Indigenous Group'
     };
 
-    // Resolve the search.php URL relative to the current page (verify/index.php)
     function searchUrl(endpoint) {
         return '../../search/search.php?type=' + endpoint + '&limit=10000';
     }
 
     async function fetchOptions(endpoint) {
         try {
-            const r = await fetch(searchUrl(endpoint));
-            const d = await r.json();
-            if (d.success && Array.isArray(d.data)) return d.data;
+            const response = await fetch(searchUrl(endpoint));
+            const data = await response.json();
+            if (data.success && Array.isArray(data.data)) return data.data;
         } catch (e) {
-            console.error('Lookup fetch failed for', endpoint, e);
+            console.error('Lookup fetch failed:', endpoint, e);
         }
         return [];
     }
 
-    function buildSearchWidget(fieldId, options) {
-        const selectEl = document.getElementById(fieldId);
-        if (!selectEl || selectEl.tagName !== 'SELECT') return; // already replaced or missing
-
-        const label = _lookupLabels[fieldId];
-
+    function buildSearchWidget(selectElement, options, label) {
         const wrapper = document.createElement('div');
         wrapper.className = 'searchable-select-wrapper';
 
         const searchInput = document.createElement('input');
         searchInput.type = 'text';
-        searchInput.placeholder = 'Type to search ' + label + '...';
+        searchInput.placeholder = `Type to search ${label}...`;
         searchInput.className = 'form-control lookup-search-input';
-        searchInput.id = fieldId + '_search';
+        searchInput.id = selectElement.id + '_search';
         searchInput.autocomplete = 'off';
 
         const hiddenInput = document.createElement('input');
         hiddenInput.type = 'hidden';
-        hiddenInput.name = fieldId;
-        hiddenInput.id = fieldId;
+        hiddenInput.name = selectElement.name;
+        hiddenInput.id = selectElement.id;
         hiddenInput.value = '';
         hiddenInput.dataset.options = JSON.stringify(options);
 
         const dropdown = document.createElement('div');
         dropdown.className = 'lookup-suggestions';
 
-        let current = [];
-        let selectedIdx = -1;
+        let currentSuggestions = [];
+        let selectedIndex = -1;
 
-        function showSuggestions(query) {
+        function updateSuggestions(query) {
             dropdown.innerHTML = '';
-            selectedIdx = -1;
-            if (!query) { current = []; return; }
-            const q = query.toLowerCase();
-            current = options.filter(o => (o.name || o.label || '').toLowerCase().includes(q)).slice(0, 8);
-            if (current.length === 0) {
-                const none = document.createElement('div');
-                none.className = 'lookup-suggestion';
-                none.textContent = 'No matches found';
-                none.style.cssText = 'color:#999;pointer-events:none';
-                dropdown.appendChild(none);
+            selectedIndex = -1;
+
+            if (!query || query.length < 1) {
+                currentSuggestions = [];
                 return;
             }
-            current.forEach((item, idx) => {
-                const el = document.createElement('div');
-                el.className = 'lookup-suggestion';
-                el.textContent = item.name || item.label;
-                el.addEventListener('mousedown', e => { e.preventDefault(); pick(item); });
-                dropdown.appendChild(el);
+
+            const queryLower = query.toLowerCase();
+            currentSuggestions = options.filter(item =>
+                (item.name || item.label || '').toLowerCase().includes(queryLower)
+            ).slice(0, 8);
+
+            if (currentSuggestions.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'lookup-suggestion';
+                noResults.textContent = 'No matches found';
+                noResults.style.color = '#999';
+                noResults.style.pointerEvents = 'none';
+                dropdown.appendChild(noResults);
+                return;
+            }
+
+            currentSuggestions.forEach((item) => {
+                const suggestionEl = document.createElement('div');
+                suggestionEl.className = 'lookup-suggestion';
+                suggestionEl.textContent = item.name || item.label;
+                suggestionEl.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    selectItem(item);
+                });
+                dropdown.appendChild(suggestionEl);
             });
         }
 
-        function pick(item) {
+        function selectItem(item) {
             searchInput.value = item.name || item.label;
             hiddenInput.value = item.id || item.value;
             dropdown.innerHTML = '';
-            current = [];
-            selectedIdx = -1;
+            currentSuggestions = [];
+            selectedIndex = -1;
         }
 
         function highlight() {
             Array.from(dropdown.querySelectorAll('.lookup-suggestion')).forEach((el, i) => {
-                el.classList.toggle('highlighted', i === selectedIdx);
+                el.classList.toggle('highlighted', i === selectedIndex);
             });
         }
 
-        searchInput.addEventListener('input', e => showSuggestions(e.target.value));
+        searchInput.addEventListener('input', (e) => updateSuggestions(e.target.value));
 
-        searchInput.addEventListener('keydown', e => {
-            if (e.key === 'ArrowDown') { e.preventDefault(); selectedIdx = Math.min(selectedIdx + 1, current.length - 1); highlight(); }
-            else if (e.key === 'ArrowUp') { e.preventDefault(); selectedIdx = Math.max(selectedIdx - 1, -1); highlight(); }
-            else if (e.key === 'Enter') { e.preventDefault(); if (selectedIdx >= 0) pick(current[selectedIdx]); }
-            else if (e.key === 'Escape') { dropdown.innerHTML = ''; current = []; selectedIdx = -1; }
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                selectedIndex = Math.min(selectedIndex + 1, currentSuggestions.length - 1);
+                highlight();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                highlight();
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (selectedIndex >= 0) selectItem(currentSuggestions[selectedIndex]);
+            } else if (e.key === 'Escape') {
+                dropdown.innerHTML = '';
+                currentSuggestions = [];
+                selectedIndex = -1;
+            }
         });
 
         searchInput.addEventListener('blur', () => {
-            // Short delay so mousedown on suggestion fires first
-            setTimeout(() => { dropdown.innerHTML = ''; current = []; }, 150);
+            setTimeout(() => { dropdown.innerHTML = ''; currentSuggestions = []; }, 150);
         });
 
-        selectEl.parentNode.insertBefore(wrapper, selectEl);
+        selectElement.parentNode.insertBefore(wrapper, selectElement);
         wrapper.appendChild(searchInput);
         wrapper.appendChild(dropdown);
         wrapper.appendChild(hiddenInput);
-        selectEl.remove();
+        selectElement.remove();
 
-        _lookupOptions[fieldId] = options;
+        _lookupOptions[selectElement.id] = options;
     }
 
-    // Build all three widgets and return a promise that resolves when done
     let _lookupReady = null;
     function initLookupWidgets() {
         if (_lookupReady) return _lookupReady;
         _lookupReady = Promise.all(
-            Object.keys(_lookupEndpoints).map(async fieldId => {
+            Object.keys(_lookupEndpoints).map(async (fieldId) => {
                 const options = await fetchOptions(_lookupEndpoints[fieldId]);
-                buildSearchWidget(fieldId, options);
+                const selectEl = document.getElementById(fieldId);
+                if (selectEl) buildSearchWidget(selectEl, options, _lookupLabels[fieldId]);
             })
         );
         return _lookupReady;
     }
 
-    // Populate a lookup widget by numeric ID value
     function setLookupValue(fieldId, value) {
         if (!value && value !== 0) return;
         const hiddenInput = document.getElementById(fieldId);
@@ -155,114 +174,173 @@
         }
     }
 
-    // ── Table state ──────────────────────────────────────────────
+    // ────────────────────────────────────────────────────────────
+    // TABLE STATE & FILTERING
+    // ────────────────────────────────────────────────────────────
+
     let activeStatus = '';
-    let sortCol      = 'name';
-    let sortDir      = 'asc';
+    let sortColumn = 'name';
+    let sortDirection = 'asc';
+    let currentSelectedId = null;
 
-    function gradeNum(g) {
-        if (!g) return 999;
-        if (/K|Kindergarten/i.test(g)) return 0;
-        const m = g.match(/\d+/);
-        return m ? parseInt(m[0], 10) : 999;
+    function normalizeGradeForSort(grade) {
+        if (!grade) return 999;
+        if (/K|Kindergarten/i.test(grade)) return 0;
+        const match = grade.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 999;
     }
 
-    const STATUS_META = {
-        'PENDING':         { cls: 'badge-pending',        label: 'Pending' },
-        'PROCESSING':      { cls: 'badge-processing',     label: 'Processing' },
-        'VERIFIED':        { cls: 'badge-verified',       label: 'Verified' },
-        'REJECTED':        { cls: 'badge-rejected',       label: 'Rejected' },
-        'WITHDRAWN':       { cls: 'badge-withdrawn',      label: 'Withdrawn' },
-        'TRANSFERRED_IN':  { cls: 'badge-transferred-in', label: 'Transferred In' },
-        'TRANSFERRED_OUT': { cls: 'badge-transferred-out',label: 'Transferred Out' },
-        'DROPPED':         { cls: 'badge-dropped',        label: 'Dropped' },
-    };
-
-    function normalizedStatus(s) {
-        const v = (s || '').toUpperCase().trim();
-        return STATUS_META[v] ? v : 'PENDING';
+    function getStatusBadgeClass(status) {
+        const s = (status || '').toUpperCase().trim();
+        const classMap = {
+            'VERIFIED': 'badge-verified',
+            'REJECTED': 'badge-rejected',
+            'PROCESSING': 'badge-processing',
+            'WITHDRAWN': 'badge-withdrawn',
+            'TRANSFERRED_IN': 'badge-transferred-in',
+            'TRANSFERRED_OUT': 'badge-transferred-out',
+            'DROPPED': 'badge-dropped'
+        };
+        return classMap[s] || 'badge-pending';
     }
 
-    function statusClass(s)  { return (STATUS_META[normalizedStatus(s)] || STATUS_META['PENDING']).cls; }
-    function statusLabel(s)  { return (STATUS_META[normalizedStatus(s)] || STATUS_META['PENDING']).label; }
+    function getStatusLabel(status) {
+        const s = (status || '').toUpperCase().trim();
+        const labelMap = {
+            'VERIFIED': 'Verified',
+            'REJECTED': 'Rejected',
+            'PROCESSING': 'Processing',
+            'WITHDRAWN': 'Withdrawn',
+            'TRANSFERRED_IN': 'Transferred In',
+            'TRANSFERRED_OUT': 'Transferred Out',
+            'DROPPED': 'Dropped'
+        };
+        return labelMap[s] || 'Pending';
+    }
 
-    function fullName(e) {
-        return [e.pi_first_name, e.pi_middle_name, e.pi_last_name]
+    function normalizeStatus(status) {
+        const s = (status || '').toUpperCase().trim();
+        const statusMap = {
+            'VERIFIED': 'VERIFIED',
+            'REJECTED': 'REJECTED',
+            'PROCESSING': 'PROCESSING',
+            'WITHDRAWN': 'WITHDRAWN',
+            'TRANSFERRED_IN': 'TRANSFERRED_IN',
+            'TRANSFERRED_OUT': 'TRANSFERRED_OUT',
+            'DROPPED': 'DROPPED'
+        };
+        return statusMap[s] || 'PENDING';
+    }
+
+    function buildFullName(enrollment) {
+        return [enrollment.pi_first_name, enrollment.pi_middle_name, enrollment.pi_last_name]
             .filter(Boolean).join(' ').trim();
     }
 
-    function getFiltered() {
-        const query = document.getElementById('searchInput').value.trim().toLowerCase();
-        const grade = document.getElementById('filterGrade').value;
-        const sex   = document.getElementById('filterSex').value;
-        const sy    = document.getElementById('filterSY').value;
+    function getFilteredEnrollments() {
+        const searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
+        const gradeFilter = document.getElementById('filterGrade').value;
+        const sexFilter = document.getElementById('filterSex').value;
+        const syFilter = document.getElementById('filterSY').value;
 
-        return ALL_ENROLLMENTS.filter(e => {
-            if (activeStatus && normalizedStatus(e.verification) !== activeStatus) return false;
-            if (grade && (e.ed_grade_level || '') !== grade) return false;
-            if (sex && (e.pi_sex || '').toUpperCase() !== sex) return false;
-            if (sy && (e.ed_school_year || '') !== sy) return false;
-            if (query) {
-                const hay = (fullName(e) + ' ' + (e.ed_lrn || '') + ' ' +
-                    (e.pi_last_name || '') + ' ' + (e.pi_first_name || '')).toLowerCase();
-                if (!hay.includes(query)) return false;
+        return window.ALL_ENROLLMENTS.filter(enrollment => {
+            if (activeStatus && normalizeStatus(enrollment.verification) !== activeStatus) return false;
+            if (gradeFilter && (enrollment.ed_grade_level || '') !== gradeFilter) return false;
+            if (sexFilter && (enrollment.pi_sex || '').toUpperCase() !== sexFilter) return false;
+            if (syFilter && (enrollment.ed_school_year || '') !== syFilter) return false;
+
+            if (searchQuery) {
+                const searchableText = (
+                    buildFullName(enrollment) + ' ' +
+                    (enrollment.ed_lrn || '') + ' ' +
+                    (enrollment.pi_last_name || '') + ' ' +
+                    (enrollment.pi_first_name || '')
+                ).toLowerCase();
+                if (!searchableText.includes(searchQuery)) return false;
             }
+
             return true;
         });
     }
 
-    function getSorted(rows) {
-        return [...rows].sort((a, b) => {
-            let av, bv;
-            switch (sortCol) {
-                case 'name':   av = fullName(a).toLowerCase();   bv = fullName(b).toLowerCase(); break;
-                case 'grade':  av = gradeNum(a.ed_grade_level);  bv = gradeNum(b.ed_grade_level); break;
-                case 'sy':     av = (a.ed_school_year || '');    bv = (b.ed_school_year || ''); break;
-                case 'sex':    av = (a.pi_sex || '');            bv = (b.pi_sex || ''); break;
-                case 'status': av = normalizedStatus(a.verification); bv = normalizedStatus(b.verification); break;
-                default:       av = ''; bv = '';
+    function getSortedEnrollments(enrollments) {
+        return [...enrollments].sort((a, b) => {
+            let valueA, valueB;
+
+            switch (sortColumn) {
+                case 'name':
+                    valueA = buildFullName(a).toLowerCase();
+                    valueB = buildFullName(b).toLowerCase();
+                    break;
+                case 'grade':
+                    valueA = normalizeGradeForSort(a.ed_grade_level);
+                    valueB = normalizeGradeForSort(b.ed_grade_level);
+                    break;
+                case 'sy':
+                    valueA = (a.ed_school_year || '');
+                    valueB = (b.ed_school_year || '');
+                    break;
+                case 'sex':
+                    valueA = (a.pi_sex || '');
+                    valueB = (b.pi_sex || '');
+                    break;
+                case 'status':
+                    valueA = normalizeStatus(a.verification);
+                    valueB = normalizeStatus(b.verification);
+                    break;
+                default:
+                    valueA = '';
+                    valueB = '';
             }
-            if (av < bv) return sortDir === 'asc' ? -1 : 1;
-            if (av > bv) return sortDir === 'asc' ?  1 : -1;
+
+            if (valueA < valueB) return sortDirection === 'asc' ? -1 : 1;
+            if (valueA > valueB) return sortDirection === 'asc' ? 1 : -1;
             return 0;
         });
     }
 
-    let currentSelectedId = null;
+    function htmlEscape(text) {
+        return String(text ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
 
     function renderTable() {
-        const filtered = getSorted(getFiltered());
-        const tbody   = document.getElementById('tableBody');
-        const noRes   = document.getElementById('noResults');
-        const countEl = document.getElementById('resultsCount');
+        const filtered = getSortedEnrollments(getFilteredEnrollments());
+        const tbody = document.getElementById('tableBody');
+        const noResults = document.getElementById('noResults');
+        const resultsCount = document.getElementById('resultsCount');
 
-        countEl.textContent = filtered.length === 1
+        resultsCount.textContent = filtered.length === 1
             ? '1 enrollment found'
-            : filtered.length + ' enrollments found';
+            : `${filtered.length} enrollments found`;
 
         if (filtered.length === 0) {
             tbody.innerHTML = '';
-            noRes.style.display = 'block';
+            noResults.style.display = 'block';
             return;
         }
-        noRes.style.display = 'none';
 
-        tbody.innerHTML = filtered.map(e => {
-            const id     = e.fk_full_name_bd;
-            const name   = fullName(e) || '—';
-            const grade  = e.ed_grade_level ? 'Grade ' + e.ed_grade_level : '—';
-            const sy     = e.ed_school_year || '—';
-            const sex    = e.pi_sex ? (e.pi_sex.charAt(0) + e.pi_sex.slice(1).toLowerCase()) : '—';
-            const sClass = statusClass(e.verification);
-            const sLabel = statusLabel(e.verification);
-            const sel    = id === currentSelectedId ? ' selected-row' : '';
+        noResults.style.display = 'none';
 
-            return `<tr class="enrollment-row${sel}" data-id="${esc(id)}">
-                <td class="fw-semibold">${esc(name)}</td>
-                <td>${esc(grade)}</td>
-                <td>${esc(sy)}</td>
-                <td>${esc(sex)}</td>
-                <td><span class="status-badge ${sClass}">${esc(sLabel)}</span></td>
+        tbody.innerHTML = filtered.map(enrollment => {
+            const id = enrollment.fk_full_name_bd;
+            const name = buildFullName(enrollment) || '—';
+            const grade = enrollment.ed_grade_level ? `Grade ${enrollment.ed_grade_level}` : '—';
+            const schoolYear = enrollment.ed_school_year || '—';
+            const sex = enrollment.pi_sex ? (enrollment.pi_sex.charAt(0) + enrollment.pi_sex.slice(1).toLowerCase()) : '—';
+            const badgeClass = getStatusBadgeClass(enrollment.verification);
+            const statusLabel = getStatusLabel(enrollment.verification);
+            const isSelected = id === currentSelectedId ? ' selected-row' : '';
+
+            return `<tr class="enrollment-row${isSelected}" data-id="${htmlEscape(id)}">
+                <td class="fw-semibold">${htmlEscape(name)}</td>
+                <td>${htmlEscape(grade)}</td>
+                <td>${htmlEscape(schoolYear)}</td>
+                <td>${htmlEscape(sex)}</td>
+                <td><span class="status-badge ${badgeClass}">${htmlEscape(statusLabel)}</span></td>
                 <td>
                     <button type="button" class="btn btn-sm btn-outline-primary me-1 btn-load-row">Edit</button>
                     <a href="../../dashboard/teacher_dashboard/download_enrollment_pdf.php?id=${encodeURIComponent(id)}"
@@ -272,23 +350,46 @@
         }).join('');
     }
 
-    function esc(s) {
-        return String(s ?? '')
-            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
-
     function updateSortHeaders() {
         document.querySelectorAll('#resultsTable th[data-sort]').forEach(th => {
-            th.classList.remove('sorted-asc','sorted-desc');
-            if (th.dataset.sort === sortCol)
-                th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+            th.classList.remove('sorted-asc', 'sorted-desc');
+            if (th.dataset.sort === sortColumn) {
+                th.classList.add(sortDirection === 'asc' ? 'sorted-asc' : 'sorted-desc');
+            }
         });
     }
 
-    // ── Load enrollment into form ────────────────────────────────
+    function updateStatusTabStyles() {
+        const statusTabClassMap = {
+            '': 'active-all',
+            'PENDING': 'active-pending',
+            'VERIFIED': 'active-verified',
+            'REJECTED': 'active-rejected',
+            'PROCESSING': 'active-processing',
+            'WITHDRAWN': 'active-withdrawn',
+            'TRANSFERRED_IN': 'active-transferred-in',
+            'TRANSFERRED_OUT': 'active-transferred-out',
+            'DROPPED': 'active-dropped'
+        };
+
+        document.querySelectorAll('.status-tab').forEach(tab => {
+            tab.className = 'status-tab';
+            if (tab.dataset.status === activeStatus) {
+                tab.classList.add(statusTabClassMap[activeStatus] || 'active-all');
+            }
+        });
+    }
+
+    // ────────────────────────────────────────────────────────────
+    // ENROLLMENT LOADING & FORM POPULATION
+    // ────────────────────────────────────────────────────────────
+
     async function loadEnrollmentData(enrollmentId) {
-        if (!enrollmentId) { hideForm(); return; }
+        if (!enrollmentId) {
+            hideForm();
+            return;
+        }
+
         currentSelectedId = enrollmentId;
         renderTable();
 
@@ -301,9 +402,8 @@
             .scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         try {
-            // Run both in parallel: fetch enrollment data + ensure lookup widgets are ready
             const [response] = await Promise.all([
-                fetch('./get_enrollment.php?id=' + encodeURIComponent(enrollmentId)).then(r => r.json()),
+                fetch(`./get_enrollment.php?id=${encodeURIComponent(enrollmentId)}`).then(r => r.json()),
                 initLookupWidgets()
             ]);
 
@@ -312,10 +412,10 @@
                 document.getElementById('enrollmentId').value = enrollmentId;
                 details.classList.add('show');
             } else {
-                alert('Error loading enrollment: ' + response.message);
+                alert(`Error loading enrollment: ${response.message}`);
             }
         } catch (err) {
-            console.error(err);
+            console.error('Error loading enrollment:', err);
             alert('Error loading enrollment data.');
         } finally {
             spinner.style.display = 'none';
@@ -329,105 +429,107 @@
         renderTable();
     }
 
-    // ── Populate form with fetched data ──────────────────────────
     function populateForm(data) {
-        const lookupFields = new Set(['pi_mother_tongue_id','pi_religion_id','ac_indigenous_group_id']);
+        const lookupFields = new Set(['pi_mother_tongue_id', 'pi_religion_id', 'ac_indigenous_group_id']);
 
-        // ── Enrollment ───────────────────────────────────────────
+        // ── Enrollment Section
         if (data.enrollment) {
             Object.entries(data.enrollment).forEach(([key, value]) => {
-
-                // Checkbox group
+                // Handle checkbox groups
                 if (key === 'li_learning_modality') {
-                    const vals = (value || '').split(',').map(v => v.trim()).filter(Boolean);
+                    const values = (value || '').split(',').map(v => v.trim()).filter(Boolean);
                     document.querySelectorAll('input[name="li_learning_modality[]"]')
-                        .forEach(cb => { cb.checked = vals.includes(cb.value); });
+                        .forEach(cb => { cb.checked = values.includes(cb.value); });
                     return;
                 }
 
-                // Lookup search widget
+                // Handle lookup widgets
                 if (lookupFields.has(key)) {
                     setLookupValue(key, value);
                     return;
                 }
 
-                const el = document.getElementById(key);
-                if (!el) return;
+                const element = document.getElementById(key);
+                if (!element) return;
 
-                // Skip number inputs when DB value is null/empty (avoids showing "0")
-                if (el.type === 'number' && (value === null || value === '' || value === undefined)) return;
+                // Skip number inputs with empty values
+                if (element.type === 'number' && (value === null || value === '' || value === undefined)) return;
 
-                el.value = value ?? '';
+                element.value = value ?? '';
             });
 
-            // Verification status
-            const statusSel = document.getElementById('verificationStatus');
-            if (statusSel && data.enrollment.verification)
-                statusSel.value = data.enrollment.verification;
+            // Set verification status
+            const statusSelect = document.getElementById('verificationStatus');
+            if (statusSelect && data.enrollment.verification) {
+                statusSelect.value = data.enrollment.verification;
+            }
 
-            // Show sections
+            // Show sections with data
             document.getElementById('section-enrollment').style.display = 'block';
-            if (Object.keys(data.enrollment).some(k => k.startsWith('pi_') && data.enrollment[k]))
+            if (Object.keys(data.enrollment).some(k => (k.startsWith('pi_') || k.startsWith('ac_') || k.startsWith('li_')) && data.enrollment[k])) {
                 document.getElementById('section-personal').style.display = 'block';
+            }
         }
 
-        // ── Address ──────────────────────────────────────────────
+        // ── Address Section
         if (data.address && Object.values(data.address).some(v => v)) {
             Object.entries(data.address).forEach(([key, value]) => {
-                const el = document.getElementById(key);
-                if (el) el.value = value || '';
+                const element = document.getElementById(key);
+                if (element) element.value = value || '';
             });
             document.getElementById('section-address').style.display = 'block';
         }
 
-        // ── Medical ──────────────────────────────────────────────
+        // ── Medical Section
         if (data.medical && Object.values(data.medical).some(v => v || (Array.isArray(v) && v.length))) {
             Object.entries(data.medical).forEach(([key, value]) => {
                 if (key === 'mf_o_medical_conditions' && Array.isArray(value)) {
                     value.forEach(val => {
-                        const cb = document.getElementById('mf_oc_' + val.toLowerCase().replace(/[^a-z0-9]/g,'_'));
+                        const cb = document.getElementById('mf_oc_' + val.toLowerCase().replace(/[^a-z0-9]/g, '_'));
                         if (cb) cb.checked = true;
                     });
                 } else if (key === 'mf_mc_conditions' && Array.isArray(value)) {
                     value.forEach(val => {
-                        const cb = document.getElementById('mf_mc_' + val.toLowerCase().replace(/[^a-z0-9]/g,'_'));
+                        const cb = document.getElementById('mf_mc_' + val.toLowerCase().replace(/[^a-z0-9]/g, '_'));
                         if (cb) cb.checked = true;
                     });
                 } else {
-                    const el = document.getElementById(key);
-                    if (el) el.value = value || '';
+                    const element = document.getElementById(key);
+                    if (element) element.value = value || '';
                 }
             });
             document.getElementById('section-medical').style.display = 'block';
         }
 
-        // ── Parents ──────────────────────────────────────────────
+        // ── Parents Section
         if (data.parents && Object.values(data.parents).some(v => v)) {
             Object.entries(data.parents).forEach(([key, value]) => {
-                const el = document.getElementById(key);
-                if (el) el.value = value || '';
+                const element = document.getElementById(key);
+                if (element) element.value = value || '';
             });
             document.getElementById('section-parents').style.display = 'block';
         }
 
-        // ── Special Needs ────────────────────────────────────────
+        // ── Special Needs Section
         if (data.specialNeeds && Object.values(data.specialNeeds).some(v => v || (Array.isArray(v) && v.length))) {
             Object.entries(data.specialNeeds).forEach(([key, value]) => {
                 if (key === 'snep_a1_diagnosis' && Array.isArray(value)) {
                     value.forEach(val => {
-                        const cb = document.getElementById('snep_diag_' + val.toLowerCase().replace(/[^a-z0-9]/g,'_'));
+                        const cb = document.getElementById('snep_diag_' + val.toLowerCase().replace(/[^a-z0-9]/g, '_'));
                         if (cb) cb.checked = true;
                     });
                 } else if (key === 'snep_a2_manifestations' && Array.isArray(value)) {
                     value.forEach(val => {
-                        const cb = document.getElementById('snep_manif_' + val.toLowerCase().replace(/[^a-z0-9]/g,'_'));
+                        const cb = document.getElementById('snep_manif_' + val.toLowerCase().replace(/[^a-z0-9]/g, '_'));
                         if (cb) cb.checked = true;
                     });
                 } else {
-                    const el = document.getElementById(key);
-                    if (el) {
-                        el.value = value ?? '';
-                        if (el.tagName === 'SELECT') el.dispatchEvent(new Event('change', { bubbles: true }));
+                    const element = document.getElementById(key);
+                    if (element) {
+                        element.value = value ?? '';
+                        if (element.tagName === 'SELECT') {
+                            element.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
                     }
                 }
             });
@@ -435,34 +537,39 @@
         }
     }
 
-    // ── DOMContentLoaded ─────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', function () {
-        // Kick off lookup widget init immediately so it's ready by the time a row is clicked
-        initLookupWidgets();
+    // ────────────────────────────────────────────────────────────
+    // EVENT LISTENERS & INITIALIZATION
+    // ────────────────────────────────────────────────────────────
 
+    document.addEventListener('DOMContentLoaded', function () {
+        initLookupWidgets();
         renderTable();
         updateSortHeaders();
 
-        // Search & filters
+        // Search input
         let searchTimer;
         document.getElementById('searchInput').addEventListener('input', function () {
             clearTimeout(searchTimer);
             searchTimer = setTimeout(renderTable, 200);
         });
+
         document.getElementById('clearSearch').addEventListener('click', function () {
             document.getElementById('searchInput').value = '';
             renderTable();
         });
-        ['filterGrade','filterSex','filterSY'].forEach(id => {
-            document.getElementById(id).addEventListener('change', renderTable);
+
+        // Filter dropdowns
+        ['filterGrade', 'filterSex', 'filterSY'].forEach(filterId => {
+            document.getElementById(filterId).addEventListener('change', renderTable);
         });
+
         document.getElementById('resetFilters').addEventListener('click', function () {
             document.getElementById('searchInput').value = '';
             document.getElementById('filterGrade').value = '';
-            document.getElementById('filterSex').value   = '';
-            document.getElementById('filterSY').value    = '';
+            document.getElementById('filterSex').value = '';
+            document.getElementById('filterSY').value = '';
             activeStatus = '';
-            updateStatusTabs();
+            updateStatusTabStyles();
             renderTable();
         });
 
@@ -470,7 +577,7 @@
         document.querySelectorAll('.status-tab').forEach(tab => {
             tab.addEventListener('click', function () {
                 activeStatus = this.dataset.status;
-                updateStatusTabs();
+                updateStatusTabStyles();
                 renderTable();
             });
         });
@@ -479,14 +586,18 @@
         document.querySelectorAll('#resultsTable th[data-sort]').forEach(th => {
             th.addEventListener('click', function () {
                 const col = this.dataset.sort;
-                if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-                else { sortCol = col; sortDir = 'asc'; }
+                if (sortColumn === col) {
+                    sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    sortColumn = col;
+                    sortDirection = 'asc';
+                }
                 updateSortHeaders();
                 renderTable();
             });
         });
 
-        // Row click → load
+        // Table row click
         document.getElementById('tableBody').addEventListener('click', function (e) {
             const row = e.target.closest('tr.enrollment-row');
             if (!row || e.target.closest('a')) return;
@@ -497,47 +608,42 @@
         document.getElementById('verifyForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const formData = new FormData(this);
+
             fetch('./process_verify.php', { method: 'POST', body: formData })
                 .then(r => r.json())
-                .then(d => {
-                    if (d.success) window.location.href = './index.php?success=1';
-                    else alert('Error: ' + d.message);
+                .then(data => {
+                    if (data.success) {
+                        // Reload page to refresh ALL_ENROLLMENTS with updated database values
+                        window.location.href = './index.php?success=1';
+                    } else {
+                        alert(`Error: ${data.message}`);
+                    }
                 })
-                .catch(err => { console.error(err); alert('Error saving enrollment.'); });
+                .catch(err => {
+                    console.error('Error:', err);
+                    alert('Error saving enrollment.');
+                });
         });
 
-        // Pre-select from URL param
-        const preSelected = new URLSearchParams(window.location.search).get('selected');
+        // Pre-select from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const preSelected = urlParams.get('selected');
         if (preSelected) loadEnrollmentData(preSelected);
     });
 
-    function updateStatusTabs() {
-        const classMap = {
-            '':               'active-all',
-            'PENDING':        'active-pending',
-            'PROCESSING':     'active-processing',
-            'VERIFIED':       'active-verified',
-            'REJECTED':       'active-rejected',
-            'WITHDRAWN':      'active-withdrawn',
-            'TRANSFERRED_IN': 'active-transferred-in',
-            'TRANSFERRED_OUT':'active-transferred-out',
-            'DROPPED':        'active-dropped',
-        };
-        document.querySelectorAll('.status-tab').forEach(tab => {
-            tab.className = 'status-tab';
-            if (tab.dataset.status === activeStatus)
-                tab.classList.add(classMap[activeStatus] ?? 'active-all');
-        });
-    }
+    // ────────────────────────────────────────────────────────────
+    // GLOBAL FUNCTIONS
+    // ────────────────────────────────────────────────────────────
 
     window.resetForm = function () {
         document.getElementById('verifyForm').reset();
-        // Clear lookup search inputs too
         document.querySelectorAll('.lookup-search-input').forEach(el => el.value = '');
         document.querySelectorAll('input[type="hidden"][data-options]').forEach(el => el.value = '');
         hideForm();
-        ['section-enrollment','section-personal','section-address',
-         'section-medical','section-parents','section-special-needs'].forEach(id => {
+        [
+            'section-enrollment', 'section-personal', 'section-address',
+            'section-medical', 'section-parents', 'section-special-needs'
+        ].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });
