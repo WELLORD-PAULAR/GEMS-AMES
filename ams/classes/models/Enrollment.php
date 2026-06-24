@@ -8,4 +8,3 @@ class Enrollment extends Model
 {
     protected string $table = 'enrollment2';
 }
-?>

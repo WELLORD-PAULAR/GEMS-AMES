@@ -8,4 +8,3 @@ class EnrollmentParents extends Model
 {
     protected string $table = 'enrollment_parent2';
 }
-?>

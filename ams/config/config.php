@@ -36,9 +36,8 @@ $options = [
 try {
     $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
 } catch (PDOException $e) {
-    if (API_DEBUG) {
-        exit("Connection failed: " . $e->getMessage());
-    } else {
-        exit("Database connection error. Please contact support.");
-    }
+    header('Content-Type: application/json');
+    http_response_code(500);
+    $message = API_DEBUG ? 'Connection failed: ' . $e->getMessage() : 'Database connection error. Please contact support.';
+    exit(json_encode(['success' => false, 'message' => $message]));
 }

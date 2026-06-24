@@ -27,7 +27,8 @@ class Database
 
     public function fetch(): ?array
     {
-        return $this->statement ? $this->statement->fetch(PDO::FETCH_ASSOC) : null;
+        $result = $this->statement ? $this->statement->fetch(PDO::FETCH_ASSOC) : null;
+        return $result ?: null;
     }
 
     public function fetchAll(): array
