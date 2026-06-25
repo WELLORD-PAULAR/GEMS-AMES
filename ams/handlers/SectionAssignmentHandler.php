@@ -19,7 +19,7 @@ class SectionAssignmentHandler
         '3' => ['3-Peace', '3-Faith'],
         '4' => ['4-Charity', '4-Generosity'],
         '5' => ['5-Loyalty', '5-Honesty'],
-        '6' => ['6-Honesty', '6-Purity'],
+        '6' => ['6-Humility', '6-Purity'],
     ];
 
     public function __construct(PDO $pdo)

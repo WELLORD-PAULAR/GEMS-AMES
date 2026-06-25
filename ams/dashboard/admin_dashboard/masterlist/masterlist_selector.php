@@ -120,7 +120,7 @@ $columnGroups = [
                             <option value="4-Generosity">4-Generosity</option>
                             <option value="5-Loyalty">5-Loyalty</option>
                             <option value="5-Honesty">5-Honesty</option>
-                            <option value="6-Honesty">6-Honesty</option>
+                            <option value="6-Humility">6-Humility</option>
                             <option value="6-Purity">6-Purity</option>
                         </select>
                     </div>
