@@ -190,8 +190,31 @@
         return match ? parseInt(match[0], 10) : 999;
     }
 
+    function normalizeStatus(status) {
+        const raw = (status || '').toString().toUpperCase().trim();
+        const normalized = raw
+            .replace(/[\s\-]+/g, '_')
+            .replace(/[^A-Z0-9_]/g, '');
+
+        const statusMap = {
+            'VERIFIED': 'VERIFIED',
+            'REJECTED': 'REJECTED',
+            'PROCESSING': 'PROCESSING',
+            'WITHDRAWN': 'WITHDRAWN',
+            'TRANSFERRED_IN': 'TRANSFERRED_IN',
+            'TRANSFERREDOUT': 'TRANSFERRED_OUT',
+            'TRANSFERRED_OUT': 'TRANSFERRED_OUT',
+            'TRANSFERREDIN': 'TRANSFERRED_IN',
+            'TRANSFERRED_IN': 'TRANSFERRED_IN',
+            'DROPPED': 'DROPPED',
+            'PENDING': 'PENDING'
+        };
+
+        return statusMap[normalized] || 'PENDING';
+    }
+
     function getStatusBadgeClass(status) {
-        const s = (status || '').toUpperCase().trim();
+        const s = normalizeStatus(status);
         const classMap = {
             'VERIFIED': 'badge-verified',
             'REJECTED': 'badge-rejected',
@@ -199,13 +222,14 @@
             'WITHDRAWN': 'badge-withdrawn',
             'TRANSFERRED_IN': 'badge-transferred-in',
             'TRANSFERRED_OUT': 'badge-transferred-out',
-            'DROPPED': 'badge-dropped'
+            'DROPPED': 'badge-dropped',
+            'PENDING': 'badge-pending'
         };
         return classMap[s] || 'badge-pending';
     }
 
     function getStatusLabel(status) {
-        const s = (status || '').toUpperCase().trim();
+        const s = normalizeStatus(status);
         const labelMap = {
             'VERIFIED': 'Verified',
             'REJECTED': 'Rejected',
@@ -213,23 +237,10 @@
             'WITHDRAWN': 'Withdrawn',
             'TRANSFERRED_IN': 'Transferred In',
             'TRANSFERRED_OUT': 'Transferred Out',
-            'DROPPED': 'Dropped'
+            'DROPPED': 'Dropped',
+            'PENDING': 'Pending'
         };
         return labelMap[s] || 'Pending';
-    }
-
-    function normalizeStatus(status) {
-        const s = (status || '').toUpperCase().trim();
-        const statusMap = {
-            'VERIFIED': 'VERIFIED',
-            'REJECTED': 'REJECTED',
-            'PROCESSING': 'PROCESSING',
-            'WITHDRAWN': 'WITHDRAWN',
-            'TRANSFERRED_IN': 'TRANSFERRED_IN',
-            'TRANSFERRED_OUT': 'TRANSFERRED_OUT',
-            'DROPPED': 'DROPPED'
-        };
-        return statusMap[s] || 'PENDING';
     }
 
     function buildFullName(enrollment) {
@@ -577,6 +588,9 @@
         document.querySelectorAll('.status-tab').forEach(tab => {
             tab.addEventListener('click', function () {
                 activeStatus = this.dataset.status;
+                if (activeStatus) {
+                    activeStatus = normalizeStatus(activeStatus);
+                }
                 updateStatusTabStyles();
                 renderTable();
             });

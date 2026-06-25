@@ -31,9 +31,9 @@ $columnGroups = [
         'rl_last_school_year_completed' => 'Last School Year Completed',
         'rl_school_attended' => 'Last School Attended',
         'rl_school_id' => 'Last School ID',
-        'pi_mother_tongue_id' => 'Mother Tongue ID',
-        'pi_religion_id' => 'Religion ID',
-        'ac_indigenous_group_id' => 'Indigenous Group ID',
+        'pi_mother_tongue_id' => 'Mother Tongue',
+        'pi_religion_id' => 'Religion',
+        'ac_indigenous_group_id' => 'Indigenous Group',
         'li_learning_modality' => 'Learning Modality',
     ],
     'Enrollment Status' => [

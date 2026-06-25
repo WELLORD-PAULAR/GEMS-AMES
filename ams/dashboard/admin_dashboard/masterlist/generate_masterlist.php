@@ -95,9 +95,9 @@ $columnMap = [
     'rl_last_school_year_completed' => 'e.rl_last_school_year_completed',
     'rl_school_attended' => 'e.rl_school_attended',
     'rl_school_id' => 'e.rl_school_id',
-    'pi_mother_tongue_id' => 'e.pi_mother_tongue_id',
-    'pi_religion_id' => 'e.pi_religion_id',
-    'ac_indigenous_group_id' => 'e.ac_indigenous_group_id',
+    'pi_mother_tongue_id' => 'COALESCE(mt.name, e.pi_mother_tongue_id)',
+    'pi_religion_id' => 'COALESCE(r.name, e.pi_religion_id)',
+    'ac_indigenous_group_id' => 'COALESCE(ig.name, e.ac_indigenous_group_id)',
     'li_learning_modality' => 'e.li_learning_modality',
     'verification' => 'e.verification',
     'created-at' => 'e.`created-at`',
@@ -150,6 +150,9 @@ try {
         LEFT JOIN enrollment_parent2 ep ON ep.fk_full_name_bd = e.fk_full_name_bd
         LEFT JOIN enrollment_medical2 em ON em.fk_full_name_bd = e.fk_full_name_bd
         LEFT JOIN enrollment_special_needs2 es ON es.fk_full_name_bd = e.fk_full_name_bd
+        LEFT JOIN mother_tongue mt ON mt.id = e.pi_mother_tongue_id
+        LEFT JOIN religion r ON r.id = e.pi_religion_id
+        LEFT JOIN indigenous_group ig ON ig.id = e.ac_indigenous_group_id
         {$whereClause}
         ORDER BY e.pi_last_name ASC, e.pi_first_name ASC
     ");
