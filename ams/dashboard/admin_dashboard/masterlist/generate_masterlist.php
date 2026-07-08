@@ -142,6 +142,22 @@ try {
         $whereClause = ' WHERE e.section = ?';
         $params[] = $selectedSection;
     }
+
+    $countWhereClause = $whereClause;
+    $countParams = $params;
+    $countCondition = '';
+
+    if ($countWhereClause === '') {
+        $countCondition = ' WHERE ';
+    } else {
+        $countCondition = ' AND ';
+    }
+
+    $countCondition .= "TRIM(COALESCE(NULLIF(e.ac_4ps_household_number, ''), '')) <> '' AND UPPER(TRIM(COALESCE(e.ac_4ps_household_number, ''))) NOT IN ('NO', 'N/A', 'NA')";
+
+    $countStmt = $pdo->prepare("SELECT COUNT(*) AS total_4ps FROM enrollment2 e{$countWhereClause}{$countCondition}");
+    $countStmt->execute($countParams);
+    $fourPsBeneficiaryCount = (int) $countStmt->fetchColumn();
     
     $stmt = $pdo->prepare("
         SELECT {$selectCols}
@@ -179,6 +195,8 @@ try {
     }
 
     $fp = fopen('php://output', 'w');
+    fputcsv($fp, ['Total 4Ps Household Beneficiaries: ' . $fourPsBeneficiaryCount]);
+    fputcsv($fp, []);
     fputcsv($fp, $headers);
 
     foreach ($enrollments as $row) {
