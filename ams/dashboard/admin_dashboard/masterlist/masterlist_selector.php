@@ -127,6 +127,32 @@ $columnGroups = [
 
                     <hr class="my-4">
 
+                    <!-- Summary Totals Toggle -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Include Summary Totals in CSV:</label>
+                        <div class="border rounded p-3 bg-light">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="summary_totals[]" value="4ps" id="summary_4ps" checked>
+                                <label class="form-check-label" for="summary_4ps">4Ps Household Beneficiaries</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="summary_totals[]" value="indigenous" id="summary_indigenous">
+                                <label class="form-check-label" for="summary_indigenous">Indigenous Group</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="summary_totals[]" value="mother_tongue" id="summary_mother_tongue">
+                                <label class="form-check-label" for="summary_mother_tongue">Mother Tongue</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="summary_totals[]" value="religion" id="summary_religion">
+                                <label class="form-check-label" for="summary_religion">Religion</label>
+                            </div>
+                        </div>
+                        <small class="text-muted">These summary lines are added at the top of the downloaded CSV.</small>
+                    </div>
+
+                    <hr class="my-4">
+
                     <!-- Column Selection Controls -->
                     <div class="mb-3 d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-outline-secondary" onclick="selectAllColumns()">Select All</button>

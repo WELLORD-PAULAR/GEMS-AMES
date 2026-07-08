@@ -71,9 +71,26 @@ if (empty($selectedColumns)) {
 
 $selectedSection = $_POST['section'] ?? '';
 $selectedSection = trim($selectedSection);
+$selectedSummaryTotals = $_POST['summary_totals'] ?? [];
+$selectedSummaryTotals = array_filter(array_map('trim', (array) $selectedSummaryTotals), function($value) {
+    return in_array($value, ['4ps', 'indigenous', 'mother_tongue', 'religion'], true);
+});
 
 function quoteIdentifier(string $identifier): string {
     return '`' . str_replace('`', '``', $identifier) . '`';
+}
+
+function buildSummaryCondition(string $whereClause, array $params, string $columnExpression): array {
+    $condition = '';
+    if ($whereClause === '') {
+        $condition = ' WHERE ';
+    } else {
+        $condition = ' AND ';
+    }
+
+    $condition .= "TRIM(COALESCE(NULLIF({$columnExpression}, ''), '')) <> '' AND UPPER(TRIM(COALESCE({$columnExpression}, ''))) NOT IN ('NO', 'N/A', 'NA')";
+
+    return [$condition, $params];
 }
 
 $columnMap = [
@@ -143,21 +160,62 @@ try {
         $params[] = $selectedSection;
     }
 
-    $countWhereClause = $whereClause;
-    $countParams = $params;
-    $countCondition = '';
+    $summaryCounts = [];
+    $summaryGroups = [];
 
-    if ($countWhereClause === '') {
-        $countCondition = ' WHERE ';
-    } else {
-        $countCondition = ' AND ';
+    if (in_array('4ps', $selectedSummaryTotals, true)) {
+        $countCondition = '';
+        if ($whereClause === '') {
+            $countCondition = ' WHERE ';
+        } else {
+            $countCondition = ' AND ';
+        }
+
+        $countCondition .= "TRIM(COALESCE(NULLIF(e.ac_4ps_household_number, ''), '')) <> '' AND UPPER(TRIM(COALESCE(e.ac_4ps_household_number, ''))) NOT IN ('NO', 'N/A', 'NA')";
+
+        $countStmt = $pdo->prepare("SELECT COUNT(*) AS total_4ps FROM enrollment2 e{$whereClause}{$countCondition}");
+        $countStmt->execute($params);
+        $summaryCounts['4ps'] = (int) $countStmt->fetchColumn();
     }
 
-    $countCondition .= "TRIM(COALESCE(NULLIF(e.ac_4ps_household_number, ''), '')) <> '' AND UPPER(TRIM(COALESCE(e.ac_4ps_household_number, ''))) NOT IN ('NO', 'N/A', 'NA')";
+    if (in_array('indigenous', $selectedSummaryTotals, true)) {
+        $countStmt = $pdo->prepare(
+            "SELECT COALESCE(ig.name, e.ac_indigenous_group_id) AS value, COUNT(*) AS total " .
+            "FROM enrollment2 e LEFT JOIN indigenous_group ig ON ig.id = e.ac_indigenous_group_id " .
+            "{$whereClause}" .
+            ($whereClause === '' ? ' WHERE ' : ' AND ') .
+            "((TRIM(COALESCE(ig.name, '')) <> '' AND UPPER(TRIM(ig.name)) NOT IN ('NO', 'N/A', 'NA')) OR (TRIM(COALESCE(e.ac_indigenous_group_id, '')) <> '' AND UPPER(TRIM(COALESCE(e.ac_indigenous_group_id, ''))) NOT IN ('NO', 'N/A', 'NA'))) " .
+            "GROUP BY value ORDER BY value"
+        );
+        $countStmt->execute($params);
+        $summaryGroups['indigenous'] = $countStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-    $countStmt = $pdo->prepare("SELECT COUNT(*) AS total_4ps FROM enrollment2 e{$countWhereClause}{$countCondition}");
-    $countStmt->execute($countParams);
-    $fourPsBeneficiaryCount = (int) $countStmt->fetchColumn();
+    if (in_array('mother_tongue', $selectedSummaryTotals, true)) {
+        $countStmt = $pdo->prepare(
+            "SELECT COALESCE(mt.name, e.pi_mother_tongue_id) AS value, COUNT(*) AS total " .
+            "FROM enrollment2 e LEFT JOIN mother_tongue mt ON mt.id = e.pi_mother_tongue_id " .
+            "{$whereClause}" .
+            ($whereClause === '' ? ' WHERE ' : ' AND ') .
+            "((TRIM(COALESCE(mt.name, '')) <> '' AND UPPER(TRIM(mt.name)) NOT IN ('NO', 'N/A', 'NA')) OR (TRIM(COALESCE(e.pi_mother_tongue_id, '')) <> '' AND UPPER(TRIM(COALESCE(e.pi_mother_tongue_id, ''))) NOT IN ('NO', 'N/A', 'NA'))) " .
+            "GROUP BY value ORDER BY value"
+        );
+        $countStmt->execute($params);
+        $summaryGroups['mother_tongue'] = $countStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    if (in_array('religion', $selectedSummaryTotals, true)) {
+        $countStmt = $pdo->prepare(
+            "SELECT COALESCE(r.name, e.pi_religion_id) AS value, COUNT(*) AS total " .
+            "FROM enrollment2 e LEFT JOIN religion r ON r.id = e.pi_religion_id " .
+            "{$whereClause}" .
+            ($whereClause === '' ? ' WHERE ' : ' AND ') .
+            "((TRIM(COALESCE(r.name, '')) <> '' AND UPPER(TRIM(r.name)) NOT IN ('NO', 'N/A', 'NA')) OR (TRIM(COALESCE(e.pi_religion_id, '')) <> '' AND UPPER(TRIM(COALESCE(e.pi_religion_id, ''))) NOT IN ('NO', 'N/A', 'NA'))) " .
+            "GROUP BY value ORDER BY value"
+        );
+        $countStmt->execute($params);
+        $summaryGroups['religion'] = $countStmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
     $stmt = $pdo->prepare("
         SELECT {$selectCols}
@@ -195,8 +253,36 @@ try {
     }
 
     $fp = fopen('php://output', 'w');
-    fputcsv($fp, ['Total 4Ps Household Beneficiaries: ' . $fourPsBeneficiaryCount]);
-    fputcsv($fp, []);
+
+    $summaryLabels = [
+        '4ps' => 'Total 4Ps Household Beneficiaries',
+        'indigenous' => 'Indigenous Group',
+        'mother_tongue' => 'Mother Tongue',
+        'religion' => 'Religion',
+    ];
+
+    foreach ($summaryLabels as $key => $label) {
+        if ($key === '4ps' && isset($summaryCounts[$key])) {
+            fputcsv($fp, [$label . ': ' . $summaryCounts[$key]]);
+            continue;
+        }
+
+        if (isset($summaryGroups[$key]) && !empty($summaryGroups[$key])) {
+            fputcsv($fp, [$label]);
+            foreach ($summaryGroups[$key] as $row) {
+                $value = trim((string) ($row['value'] ?? ''));
+                if ($value === '') {
+                    continue;
+                }
+                fputcsv($fp, [$value . ': ' . (int) $row['total']]);
+            }
+        }
+    }
+
+    if (!empty($summaryCounts) || !empty($summaryGroups)) {
+        fputcsv($fp, []);
+    }
+
     fputcsv($fp, $headers);
 
     foreach ($enrollments as $row) {
