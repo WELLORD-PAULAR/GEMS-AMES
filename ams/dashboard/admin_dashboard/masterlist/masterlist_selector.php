@@ -57,6 +57,13 @@ $columnGroups = [
         'mi_last_name' => 'Mother\'s Last Name',
         'mi_first_name' => 'Mother\'s First Name',
         'mi_contact_number' => 'Mother\'s Contact',
+        'gi_last_name' => 'Guardian Last Name',
+        'gi_first_name' => 'Guardian First Name',
+        'gi_middle_name' => 'Guardian Middle Name',
+        'gi_contact_number' => 'Guardian Contact',
+        'gi_occupation' => 'Guardian Occupation',
+        'gi_relationship_status' => 'Guardian Relationship Status',
+        'gi_communication' => 'Guardian Communication',
     ],
     'Medical Information' => [
         'mf_o_medical_conditions' => 'Medical Conditions',

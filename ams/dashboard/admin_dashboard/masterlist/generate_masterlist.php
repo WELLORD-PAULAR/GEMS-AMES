@@ -134,6 +134,13 @@ $columnMap = [
     'mi_last_name' => 'ep.mi_last_name',
     'mi_first_name' => 'ep.mi_first_name',
     'mi_contact_number' => 'ep.mi_contact_number',
+    'gi_last_name' => 'ep.gi_last_name',
+    'gi_first_name' => 'ep.gi_first_name',
+    'gi_middle_name' => 'ep.gi_middle_name',
+    'gi_contact_number' => 'ep.gi_contact_number',
+    'gi_occupation' => 'ep.gi_occupation',
+    'gi_relationship_status' => 'ep.gi_relationship_status',
+    'gi_communication' => 'ep.gi_communication',
     // enrollment_medical2 table
     'mf_o_medical_conditions' => 'em.mf_o_medical_conditions',
     'mf_o_others' => 'em.mf_o_others',
