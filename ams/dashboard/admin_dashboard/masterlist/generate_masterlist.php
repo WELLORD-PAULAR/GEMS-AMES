@@ -55,6 +55,7 @@ $allColumns = [
     'gi_occupation' => 'Guardian Occupation',
     'gi_relationship_status' => 'Guardian Relationship Status',
     'gi_communication' => 'Guardian Communication',
+    'ec_to_contact' => 'Emergency Contact',
     'mf_o_medical_conditions' => 'Medical Conditions',
     'mf_o_others' => 'Medical Others',
     'mf_mc_conditions' => 'Medical Comorbidities',
@@ -148,6 +149,7 @@ $columnMap = [
     'gi_occupation' => 'ep.gi_occupation',
     'gi_relationship_status' => 'ep.gi_relationship_status',
     'gi_communication' => 'ep.gi_communication',
+    'ec_to_contact' => 'ep.ec_to_contact',
     // enrollment_medical2 table
     'mf_o_medical_conditions' => 'em.mf_o_medical_conditions',
     'mf_o_others' => 'em.mf_o_others',

@@ -64,6 +64,7 @@ $columnGroups = [
         'gi_occupation' => 'Guardian Occupation',
         'gi_relationship_status' => 'Guardian Relationship Status',
         'gi_communication' => 'Guardian Communication',
+        'ec_to_contact' => 'Emergency Contact',
     ],
     'Medical Information' => [
         'mf_o_medical_conditions' => 'Medical Conditions',
